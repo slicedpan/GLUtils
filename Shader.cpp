@@ -1,15 +1,23 @@
 #include "Shader.h"
 #include "Uniform.h"
+#include "ShaderManager.h"
 #include <GL\glew.h>
 #include <cstdio>
 #include <cstdlib>
 
 Uniform Shader::dummy;
 
+void Shader::Register()
+{
+	ShaderManager::GetSingletonPtr()->Add(this);
+}
+
 Shader::Shader(char * vertexFileName, char * fragmentFileName) : uniformNumber(0)
 {	
 	SetSource(vertexFileName, fragmentFileName);
 	LoadFromFiles();	
+	SetName("");
+	Register();
 }
 
 Shader::Shader(char * vertexFileName, char * fragmentFileName, char* name) : uniformNumber(0)
@@ -17,6 +25,7 @@ Shader::Shader(char * vertexFileName, char * fragmentFileName, char* name) : uni
 	SetSource(vertexFileName, fragmentFileName);
 	LoadFromFiles();
 	SetName(name);
+	Register();
 }
 
 void Shader::SetSource(char * vertexFileName,char * fragmentFileName)
@@ -35,13 +44,11 @@ void Shader::LoadFromFiles()
 	char * fragmentSource = getSourceFromFile(fFileName);
 	if (!vertexSource || !fragmentSource)
 	{
-		sprintf(errorLog, "Could not find files %s and %s!", vFileName, fFileName);
+		printf("Could not find files %s and %s!", vFileName, fFileName);
 		return;
 	}
-	int length = strlen(vertexSource);
-	glShaderSource(vertexID, 1, (const GLchar**)&vertexSource, &length);
-	length = strlen(fragmentSource);
-	glShaderSource(fragmentID, 1, (const GLchar**)&fragmentSource, &length);
+	glShaderSource(vertexID, 1, (const GLchar**)&vertexSource, 0);
+	glShaderSource(fragmentID, 1, (const GLchar**)&fragmentSource, 0);
 	
 	free(vertexSource);
 	free(fragmentSource);	
@@ -70,12 +77,18 @@ bool Shader::Compile()
 
 	glID = glCreateProgram();
 
+	sprintf(buf, "VertexShader:\n");
+	strncat(errorLog, buf, strlen(buf));
+
 	glCompileShader(vertexID);
 	glGetShaderInfoLog(vertexID, 256, NULL, buf);
 	strncat(errorLog, buf, 256);
 	glGetShaderiv(vertexID, GL_COMPILE_STATUS, &flag);
 	if (!flag)
 		return false;
+
+	sprintf(buf, "FragmentShader:\n");
+	strncat(errorLog, buf, strlen(buf));
 	
 	glCompileShader(fragmentID);
 	glGetShaderInfoLog(fragmentID, 256, NULL, buf);
@@ -83,6 +96,9 @@ bool Shader::Compile()
 	glGetShaderiv(fragmentID, GL_COMPILE_STATUS, &flag);
 	if (!flag)
 		return false;
+
+	sprintf(buf, "Link:\n");
+	strncat(errorLog, buf, strlen(buf));
 
 	glAttachShader(glID, vertexID);
 	glAttachShader(glID, fragmentID);
@@ -113,9 +129,9 @@ char * getSourceFromFile(char* filename)
 	fseek(input, 0, SEEK_END);
 	size = ftell(input);
 	fseek(input, 0, SEEK_SET);
-	buf = (char*)malloc(sizeof(char) * size);
+	buf = (char*)malloc(sizeof(char) * (size + 1));
 	fread(buf, sizeof(char), size, input);
-	buf[size - 1] = 0;
+	buf[size] = 0;
 	fclose(input);
 	return buf;
 }

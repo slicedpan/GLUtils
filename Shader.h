@@ -25,7 +25,7 @@ public:
 	bool Reload();
 	char * GetName() { return name; }
 	void SetName(char* name) { strncpy(this->name, name, 64); }
-	int GetNumberOfUniforms() { return uniformNumber; }	
+	int GetNumberOfUniforms() { return uniformNumber; }		
 private:
 	std::map<std::string, Uniform> uniforms;
 	unsigned int glID;
@@ -39,6 +39,7 @@ private:
 	char name[64];
 	int uniformNumber;
 	static Uniform dummy;
+	void Register();
 };
 
 char * getSourceFromFile(char* filename);
