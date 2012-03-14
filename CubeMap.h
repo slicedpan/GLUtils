@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Texture.h"
+#include "BasicTexture.h"
 #define VERTICALCROSS 0
 #define HORIZONTALCROSS 1
 #define MULTITEXTURE 2
 
-class CubeMap : public Texture
+class CubeMap : public BasicTexture
 {
 public:
 	CubeMap(char * filename, int faceWidth);

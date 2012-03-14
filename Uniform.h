@@ -4,6 +4,7 @@
 
 class Mat4;
 class Mat3;
+class Vec2;
 class Vec3;
 class Vec4;
 
@@ -15,6 +16,7 @@ public:
 	~Uniform(void);
 	void SetValue(Mat4& matrix);
 	void SetValue(Mat3& matrix);
+	void SetValue(Vec2& vector);
 	void SetValue(Vec3& vector);
 	void SetValue(Vec4& vector);
 	void SetValue(int intVal);

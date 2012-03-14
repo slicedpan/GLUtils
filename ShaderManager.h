@@ -10,8 +10,6 @@ typedef std::pair<std::string, Shader*> shaderEntry;
 class ShaderManager
 {
 public:
-	ShaderManager(void);
-	~ShaderManager(void);
 	static ShaderManager* GetSingletonPtr() 
 	{ 
 		if (!instance)
@@ -50,6 +48,8 @@ public:
 		{
 			if (!it->second->Reload())
 				printf("%s", it->second->GetErrorLog());
+			else
+				printf("Shader: %s\nCompiledSuccessfully\n", it->second->GetName());
 		}
 	}
 private:

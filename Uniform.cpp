@@ -22,6 +22,11 @@ void Uniform::SetValue(Mat3& matrix)
 	if (id >= 0)
 		glUniformMatrix3fv(id, 1, false, matrix.Ref());
 }
+void Uniform::SetValue(Vec2& vector)
+{
+	if (id >= 0)
+		glUniform2fv(id, 1, vector.Ref());
+}
 void Uniform::SetValue(Vec3& vector)
 {
 	if(id >= 0)

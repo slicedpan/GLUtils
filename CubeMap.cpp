@@ -5,14 +5,14 @@
 #include <cstdlib>
 
 CubeMap::CubeMap(char * filename, int faceWidth) 
-	: Texture(filename),
+	: BasicTexture(filename),
 	faceWidth(faceWidth)
 {
 	format = VERTICALCROSS;
 }
 
 CubeMap::CubeMap(char* filename, int faceWidth, int format)
-	: Texture(filename),
+	: BasicTexture(filename),
 	faceWidth(faceWidth),
 	format(format)
 {
