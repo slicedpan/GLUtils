@@ -130,7 +130,7 @@ void VBOMesh::Load()
 
 	glBindVertexArray(0);
 	//TODO set vertex attributes for normals/texcoords
-	Print();
+	//Print();
 	delete obj;
 	loaded = true;
 }
@@ -191,6 +191,7 @@ void VBOMesh::Draw()
 		return;
 	glBindVertexArray(vaoID);
 	glDrawElements(GL_TRIANGLES, triCount * 3, GL_UNSIGNED_SHORT, (void*)0);
+	
 }
 
 void VBOMesh::DrawImmediate()
