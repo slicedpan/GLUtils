@@ -38,12 +38,16 @@ public:
 	void Draw();
 	void DrawImmediate();
 	void Print();
+	void Load();
+	void CleanUp();
 private:
 	objLoader* obj;
 	float* meshData;
 	unsigned short* indexData;
 	bool hasNormals;
 	bool hasTextureCoords;
+	bool generateNormals;
+	char* filename;
 	unsigned int bufID;
 	unsigned int vertexCount;
 	unsigned int triCount;
@@ -51,5 +55,6 @@ private:
 	unsigned int vaoID;
 	unsigned int vertexComponents;
 	unsigned int vertexSize;
+	bool loaded;
 };
 

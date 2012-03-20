@@ -9,9 +9,7 @@ Vec3 FromFloatV(float * ptr)
 	return Vec3(ptr[0], ptr[1], ptr[2]);
 }
 
-VBOMesh::VBOMesh(char * filename, bool smoothNormals, bool generateNormals)
-	: hasNormals(true),
-	hasTextureCoords(true)
+void VBOMesh::Load()
 {
 	obj = new objLoader();
 
@@ -21,9 +19,12 @@ VBOMesh::VBOMesh(char * filename, bool smoothNormals, bool generateNormals)
 		vertexCount = 0;
 		vaoID = 0;
 		return;
-	}
+	}	
 
 	glGenVertexArrays(1, &vaoID);
+
+	hasNormals = true;
+	hasTextureCoords = true;
 
 	for (int i = 0; i < obj->faceCount; ++i)
 	{
@@ -59,6 +60,7 @@ VBOMesh::VBOMesh(char * filename, bool smoothNormals, bool generateNormals)
 	
 	vertexCount = obj->faceCount * 3;
 	triCount = obj->faceCount;
+
 	meshData = (float*)malloc(vertexSize * vertexCount);
 	indexData = (unsigned short*)malloc(sizeof(unsigned short) * triCount * 3);
 	unsigned int meshDataIndex = 0;		
@@ -106,6 +108,7 @@ VBOMesh::VBOMesh(char * filename, bool smoothNormals, bool generateNormals)
 			Vec3 normal = -norm(cross(v1 - v2, v2 - v3));
 			memcpy(meshData + (vertexComponents * i * 3) + 3, normal.Ref(), sizeof(float) * 3);
 		}
+		hasNormals = true;
 	}
 
 	glGenBuffers(1, &bufID);
@@ -119,7 +122,7 @@ VBOMesh::VBOMesh(char * filename, bool smoothNormals, bool generateNormals)
 	glEnableVertexAttribArray(0);	
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexSize, (void*)0);
 
-	if (hasTextureCoords || generateNormals)
+	if (hasNormals)
 	{
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertexSize, (void*)(3 * sizeof(float)));
@@ -128,6 +131,53 @@ VBOMesh::VBOMesh(char * filename, bool smoothNormals, bool generateNormals)
 	glBindVertexArray(0);
 	//TODO set vertex attributes for normals/texcoords
 	Print();
+	delete obj;
+	loaded = true;
+}
+
+VBOMesh::VBOMesh(char * filename, bool smoothNormals, bool generateNormals)
+	: hasNormals(false),
+	hasTextureCoords(false),
+	generateNormals(generateNormals),
+	filename(filename),
+	meshData(0),
+	indexData(0),
+	vaoID(0),
+	bufID(0),
+	indexBufID(0),
+	loaded(false)
+{
+	
+}
+
+void VBOMesh::CleanUp()
+{
+	if (meshData)
+	{
+		free(meshData);
+		meshData = 0;
+	}
+	if (indexData)
+	{
+		free(indexData);
+		indexData = 0;
+	}
+	if (vaoID)
+	{
+		glDeleteVertexArrays(1, &vaoID);
+		vaoID = 0;
+	}
+	if (bufID)
+	{
+		glDeleteBuffers(1, &bufID);
+		bufID = 0;
+	}
+	if (indexBufID)
+	{
+		glDeleteBuffers(1, &indexBufID);
+		indexBufID = 0;
+	}
+	loaded = false;
 }
 
 VBOMesh::~VBOMesh(void)
@@ -137,12 +187,16 @@ VBOMesh::~VBOMesh(void)
 
 void VBOMesh::Draw()
 {
+	if (!loaded)
+		return;
 	glBindVertexArray(vaoID);
 	glDrawElements(GL_TRIANGLES, triCount * 3, GL_UNSIGNED_SHORT, (void*)0);
 }
 
 void VBOMesh::DrawImmediate()
 {
+	if (!loaded)
+		return;
 	glBegin(GL_TRIANGLES);
 	for (int i = 0; i < triCount; ++i)
 	{

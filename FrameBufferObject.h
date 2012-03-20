@@ -19,6 +19,7 @@ public:
 	void Unbind();
 private:
 	std::vector<FBOTexture*> textures;
+	std::vector<GLuint> renderBuffers;
 	GLuint glID;
 	int width;
 	int height;
