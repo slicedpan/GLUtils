@@ -49,9 +49,9 @@ void objLoader::Draw()
 	{
 		for (int j = 0; j < 3; ++j)
 		{
-			glVertex3dv(data.vertex_list[data.face_list[i]->vertex_index[j]]->e);
+			glVertex3fv(data.vertex_list[data.face_list[i]->vertex_index[j]]->e);
 			if (data.face_list[i]->normal_index > 0)
-				glNormal3dv(data.vertex_normal_list[data.face_list[i]->normal_index[j]]->e);
+				glNormal3fv(data.vertex_normal_list[data.face_list[i]->normal_index[j]]->e);
 		}
 	}
 	glEnd();
