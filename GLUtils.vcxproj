@@ -13,21 +13,32 @@
   <ItemGroup>
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="FrameBufferObject.cpp" />
+    <ClCompile Include="ObjLoader\list.cpp" />
+    <ClCompile Include="ObjLoader\objLoader.cpp" />
+    <ClCompile Include="ObjLoader\obj_parser.cpp" />
+    <ClCompile Include="ObjLoader\string_extra.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="stb_image.c" />
     <ClCompile Include="BasicTexture.cpp" />
     <ClCompile Include="Uniform.cpp" />
+    <ClCompile Include="VBOMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CubeMap.h" />
+    <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="FBOTexture.h" />
     <ClInclude Include="FrameBufferObject.h" />
+    <ClInclude Include="ObjLoader\list.h" />
+    <ClInclude Include="ObjLoader\objLoader.h" />
+    <ClInclude Include="ObjLoader\obj_parser.h" />
+    <ClInclude Include="ObjLoader\string_extra.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="BasicTexture.h" />
     <ClInclude Include="Uniform.h" />
+    <ClInclude Include="VBOMesh.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0A23B455-E6FD-4075-96D4-A14083E09A76}</ProjectGuid>

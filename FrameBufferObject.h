@@ -4,7 +4,7 @@
 #include <vector>
 #include <GL/glew.h>
 
-class FBOTexture;
+struct FBOTexture;
 
 class FrameBufferObject
 {

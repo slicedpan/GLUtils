@@ -8,6 +8,8 @@ FrameBufferObject::FrameBufferObject(int width, int height, int depthBufferBitDe
 	textureType(textureType)
 {
 	glGenFramebuffers(1, &glID);
+	if (!glGenFramebuffers)
+		throw;
 	if (depthBufferBitDepth || stencilBufferBitDepth)
 	{
 		//TODO add depth/stencil buffers
