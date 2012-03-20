@@ -155,6 +155,6 @@ Uniform& Shader::Uniforms(std::string name)
 	uniformIterator iter = uniforms.find(name);
 	if (iter != uniforms.end())
 		return iter->second;
-	else
+	else	
 		return dummy;
 }

@@ -8,9 +8,39 @@ FrameBufferObject::FrameBufferObject(int width, int height, int depthBufferBitDe
 	textureType(textureType)
 {
 	glGenFramebuffers(1, &glID);
+	if (!glGenFramebuffers)
+		throw;
 	if (depthBufferBitDepth || stencilBufferBitDepth)
 	{
-		//TODO add depth/stencil buffers
+		GLenum format = 0;
+		if (depthBufferBitDepth && stencilBufferBitDepth)
+		{
+			if (depthBufferBitDepth == 32 && stencilBufferBitDepth == 8)
+				format = GL_DEPTH32F_STENCIL8;
+			else
+				format = GL_DEPTH24_STENCIL8;
+			GLuint id;
+			glGenRenderbuffers(1, &id);
+			renderBuffers.push_back(id);
+			glBindRenderbuffer(GL_RENDERBUFFER, id);
+			glRenderbufferStorage(GL_RENDERBUFFER, format, width, height);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, id);
+		}
+		else if (stencilBufferBitDepth == 0)
+		{
+			if (depthBufferBitDepth == 16)			
+				format = GL_DEPTH_COMPONENT16;
+			else if (depthBufferBitDepth == 24)
+				format = GL_DEPTH_COMPONENT24;
+			else
+				format = GL_DEPTH_COMPONENT32F;
+			GLuint id;
+			glGenRenderbuffers(1, &id);
+			renderBuffers.push_back(id);
+			glBindRenderbuffer(GL_RENDERBUFFER, id);
+			glRenderbufferStorage(GL_RENDERBUFFER, format, width, height);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, id);
+		}		
 	}
 }
 
