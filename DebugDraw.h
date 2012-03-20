@@ -1,6 +1,6 @@
 #include <svl\SVL.h>
-#include <svl\SVLgl.h>
 #include <GL\glew.h>
+#include <svl\SVLgl.h>
 
 inline void DrawArrow(Vec3& point, Vec3& direction, Vec3& colour)
 {	
