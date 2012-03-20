@@ -131,7 +131,6 @@ void VBOMesh::Load()
 	glBindVertexArray(0);
 	//TODO set vertex attributes for normals/texcoords
 	//Print();
-	delete obj;
 	loaded = true;
 }
 
