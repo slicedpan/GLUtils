@@ -14,7 +14,14 @@ VBOMesh::VBOMesh(char * filename, bool smoothNormals, bool generateNormals)
 	hasTextureCoords(true)
 {
 	obj = new objLoader();
-	obj->load(filename);
+
+	if (!obj->load(filename))
+	{
+		triCount = 0;
+		vertexCount = 0;
+		vaoID = 0;
+		return;
+	}
 
 	glGenVertexArrays(1, &vaoID);
 
