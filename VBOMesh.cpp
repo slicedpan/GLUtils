@@ -61,19 +61,30 @@ void VBOMesh::Load()
 	vertexCount = obj->faceCount * 3;
 	triCount = obj->faceCount;
 
-	meshData = (float*)malloc(vertexSize * vertexCount);
-	indexData = (unsigned short*)malloc(sizeof(unsigned short) * triCount * 3);
+	if (vertexCount > 65535)
+	{
+		longIndexData = (unsigned int*)malloc(sizeof(int) * triCount * 3);
+		indexFormat = GL_UNSIGNED_INT;
+	}
+	else
+	{
+		indexData = (unsigned short*)malloc(sizeof(unsigned short) * triCount * 3);
+		indexFormat = GL_UNSIGNED_SHORT;
+	}
+
+	meshData = (float*)malloc(vertexSize * vertexCount);	
 	unsigned int meshDataIndex = 0;		
 	unsigned int vertexOffset;
 	int indexCount = 0;
+
 	for (int i = 0; i < obj->faceCount; ++i)
 	{
 		for (int j = 0; j < 3; ++j)
 		{
 			vertexOffset = 0;
-			meshData[meshDataIndex] = obj->vertexList[obj->faceList[i]->vertex_index[j]]->e[0] / 5.0f;
-			meshData[meshDataIndex + 1] = obj->vertexList[obj->faceList[i]->vertex_index[j]]->e[1] / 5.0f;
-			meshData[meshDataIndex + 2] = obj->vertexList[obj->faceList[i]->vertex_index[j]]->e[2] / 5.0f;
+			meshData[meshDataIndex] = obj->vertexList[obj->faceList[i]->vertex_index[j]]->e[0];
+			meshData[meshDataIndex + 1] = obj->vertexList[obj->faceList[i]->vertex_index[j]]->e[1];
+			meshData[meshDataIndex + 2] = obj->vertexList[obj->faceList[i]->vertex_index[j]]->e[2];
 
 			vertexOffset += 3;
 
@@ -92,12 +103,22 @@ void VBOMesh::Load()
 				vertexOffset += 2;
 			}
 			meshDataIndex += vertexComponents;
-
-			indexData[(i * 3) + j] = indexCount++;
+			
+			if (indexFormat = GL_UNSIGNED_INT)
+			{
+				longIndexData[(i * 3) + j] = indexCount++;
+			}
+			else
+			{
+				indexData[(i * 3) + j] = indexCount++;
+			}
 		}			
 	}
 
-	if (generateNormals)
+	if (triCount != obj->faceCount)
+		throw;
+
+	if (generateNormals && !hasNormals)
 	{		
 		Vec3 v1, v2, v3;
 		for (int i = 0; i < obj->faceCount; ++i)
@@ -118,7 +139,10 @@ void VBOMesh::Load()
 	glBindBuffer(GL_ARRAY_BUFFER, bufID);
 	glBufferData(GL_ARRAY_BUFFER, vertexSize * vertexCount , meshData, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, triCount * 3 * sizeof(unsigned short), indexData, GL_STATIC_DRAW);
+	if (indexFormat == GL_UNSIGNED_INT)	
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * triCount * 3, longIndexData, GL_STATIC_DRAW);
+	else
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, triCount * 3 * sizeof(unsigned short), indexData, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);	
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexSize, (void*)0);
 
@@ -189,8 +213,8 @@ void VBOMesh::Draw()
 	if (!loaded)
 		return;
 	glBindVertexArray(vaoID);
-	glDrawElements(GL_TRIANGLES, triCount * 3, GL_UNSIGNED_SHORT, (void*)0);
-	
+	glDrawElements(GL_TRIANGLES, triCount * 3, indexFormat, (void*)0);
+	glBindVertexArray(0);
 }
 
 void VBOMesh::DrawImmediate()
@@ -198,30 +222,6 @@ void VBOMesh::DrawImmediate()
 	if (!loaded)
 		return;
 	obj->Draw();
-	/*
-	glBegin(GL_TRIANGLES);
-	for (int i = 0; i < triCount; ++i)
-	{
-		for (int j = 0; j < 3; ++j)
-		{
-			float* pos = meshData + ((i * 3 + j) * vertexComponents);
-			glVertex3fv(pos);
-			glNormal3fv(pos + 3);
-		}		
-	}
-	glEnd();
-	for (int i = 0; i < triCount; ++i)
-	{
-		for (int j = 0; j < 3; ++j)
-		{
-			float* pos = meshData + ((i * 3) + j);
-			float* normal = meshData + ((i * 3 + j) * vertexComponents) + 3;
-			Vec3 p(pos[0], pos[1], pos[2]);
-			Vec3 n(normal[0], normal[1], normal[2]);
-			DrawArrow(p, n, Vec3(0, 0, 1));
-		}
-	}
-	*/
 }
 
 void VBOMesh::Print()

@@ -44,15 +44,15 @@ typedef struct obj_material
 {
 	char name[MATERIAL_NAME_SIZE];
 	char texture_filename[OBJ_FILENAME_LENGTH];
-	double amb[3];
-	double diff[3];
-	double spec[3];
-	double reflect;
-	double refract;
-	double trans;
-	double shiny;
-	double glossy;
-	double refract_index;
+	float amb[3];
+	float diff[3];
+	float spec[3];
+	float reflect;
+	float refract;
+	float trans;
+	float shiny;
+	float glossy;
+	float refract_index;
 };
 
 typedef struct obj_camera

@@ -44,6 +44,7 @@ private:
 	objLoader* obj;
 	float* meshData;
 	unsigned short* indexData;
+	unsigned int* longIndexData;
 	bool hasNormals;
 	bool hasTextureCoords;
 	bool generateNormals;
@@ -56,5 +57,6 @@ private:
 	unsigned int vertexComponents;
 	unsigned int vertexSize;
 	bool loaded;
+	unsigned int indexFormat;
 };
 

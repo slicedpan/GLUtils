@@ -6,7 +6,7 @@
 bool QuadDrawer::initialised = false;
 QuadDrawer* QuadDrawer::instance = 0;
 
-void QuadDrawer::DrawQuad(Vec2& max, Vec2& min)
+void QuadDrawer::DrawQuad(Vec2& min, Vec2& max)
 {
 	if (!instance)
 		Initialise();
@@ -21,13 +21,14 @@ void QuadDrawer::DrawQuad(Vec2& max, Vec2& min)
 
 	instance->vertexData[3].position[0] = min[0];
 	instance->vertexData[3].position[1] = max[0];
+	
+	glBindVertexArray(instance->vaoID);
 
 	glBindBuffer(GL_ARRAY_BUFFER, instance->vboID);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)2);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, instance->iboID);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void*)0);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * 4, instance->vertexData, GL_DYNAMIC_DRAW);
 
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void*)0);	
+	glBindVertexArray(0);
 }
 
 void QuadDrawer::Initialise()
@@ -35,6 +36,8 @@ void QuadDrawer::Initialise()
 	instance = new QuadDrawer();
 	glGenBuffers(1, &instance->vboID);
 	glGenBuffers(1, &instance->iboID);
+	glGenVertexArrays(1, &instance->vaoID);
+	glBindVertexArray(instance->vaoID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, instance->iboID);
 	instance->indices = (unsigned short*)malloc(sizeof(unsigned short) * 6);
 	instance->indices[0] = 0;
@@ -61,6 +64,10 @@ void QuadDrawer::Initialise()
 
 	glBindBuffer(GL_ARRAY_BUFFER, instance->vboID);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * 4, instance->vertexData, GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(2 * sizeof(float)));
+
+	glBindVertexArray(0);
 }
 
 void QuadDrawer::CleanUp()

@@ -51,7 +51,23 @@ void objLoader::Draw()
 		{
 			glVertex3fv(data.vertex_list[data.face_list[i]->vertex_index[j]]->e);
 			if (data.face_list[i]->normal_index > 0)
-				glNormal3fv(data.vertex_normal_list[data.face_list[i]->normal_index[j]]->e);
+				glTexCoord3fv(data.vertex_normal_list[data.face_list[i]->normal_index[j]]->e);
+		}
+	}
+	glEnd();
+	glBegin(GL_LINES);
+	for (int i = 0; i < data.face_count; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			float* pos = data.vertex_list[data.face_list[i]->vertex_index[j]]->e;
+			float* n = data.vertex_normal_list[data.face_list[i]->normal_index[j]]->e;
+			float vec[3];
+			vec[0] = pos[0] + n[0];
+			vec[1] = pos[1] + n[1];
+			vec[2] = pos[2] + n[2];
+			glVertex3fv(pos);
+			glVertex3fv(vec);
 		}
 	}
 	glEnd();

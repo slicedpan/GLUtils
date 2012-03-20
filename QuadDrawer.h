@@ -11,7 +11,7 @@ struct vertex
 class QuadDrawer
 {
 public:
-	static void DrawQuad(Vec2& max, Vec2& min);
+	static void DrawQuad(Vec2& min, Vec2& max);
 	~QuadDrawer();
 private:
 	static bool initialised;
@@ -23,5 +23,6 @@ private:
 	unsigned int iboID;
 	unsigned short * indices;
 	vertex * vertexData;
+	unsigned int vaoID;
 };
 
