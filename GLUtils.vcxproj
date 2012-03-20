@@ -13,6 +13,14 @@
   <ItemGroup>
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="FrameBufferObject.cpp" />
+    <ClCompile Include="glm\glm.c" />
+    <ClCompile Include="glm\glmimg.c" />
+    <ClCompile Include="glm\glmimg_devil.c" />
+    <ClCompile Include="glm\glmimg_jpg.c" />
+    <ClCompile Include="glm\glmimg_png.c" />
+    <ClCompile Include="glm\glmimg_sdl.c" />
+    <ClCompile Include="glm\glmimg_sim.c" />
+    <ClCompile Include="glm\glm_util.c" />
     <ClCompile Include="ObjLoader\list.cpp" />
     <ClCompile Include="ObjLoader\objLoader.cpp" />
     <ClCompile Include="ObjLoader\obj_parser.cpp" />
@@ -29,6 +37,8 @@
     <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="FBOTexture.h" />
     <ClInclude Include="FrameBufferObject.h" />
+    <ClInclude Include="glm\glm.h" />
+    <ClInclude Include="glm\glmint.h" />
     <ClInclude Include="ObjLoader\list.h" />
     <ClInclude Include="ObjLoader\objLoader.h" />
     <ClInclude Include="ObjLoader\obj_parser.h" />

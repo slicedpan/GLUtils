@@ -198,6 +198,8 @@ void VBOMesh::DrawImmediate()
 {
 	if (!loaded)
 		return;
+	obj->Draw();
+	/*
 	glBegin(GL_TRIANGLES);
 	for (int i = 0; i < triCount; ++i)
 	{
@@ -220,6 +222,7 @@ void VBOMesh::DrawImmediate()
 			DrawArrow(p, n, Vec3(0, 0, 1));
 		}
 	}
+	*/
 }
 
 void VBOMesh::Print()

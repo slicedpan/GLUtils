@@ -14,6 +14,8 @@ public:
 
 	int load(char *filename);
 
+	void Draw();
+
 	obj_vector **vertexList;
 	obj_vector **normalList;
 	obj_vector **textureList;

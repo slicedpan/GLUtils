@@ -1,6 +1,6 @@
 #include "objLoader.h"
 #include "obj_parser.h"
-
+#include <GL/glew.h>
 
 int objLoader::load(char *filename)
 {
@@ -40,4 +40,19 @@ int objLoader::load(char *filename)
 	}
 
 	return no_error;
+}
+
+void objLoader::Draw()
+{
+	glBegin(GL_TRIANGLES);
+	for (int i = 0; i < data.face_count; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			glVertex3dv(data.vertex_list[data.face_list[i]->vertex_index[j]]->e);
+			if (data.face_list[i]->normal_index > 0)
+				glNormal3dv(data.vertex_normal_list[data.face_list[i]->normal_index[j]]->e);
+		}
+	}
+	glEnd();
 }
