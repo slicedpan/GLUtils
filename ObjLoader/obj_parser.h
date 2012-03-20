@@ -37,7 +37,7 @@ typedef struct obj_plane
 
 typedef struct obj_vector
 {
-	double e[3];
+	float e[3];
 };
 
 typedef struct obj_material
