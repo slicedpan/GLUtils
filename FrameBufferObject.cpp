@@ -7,9 +7,9 @@ FrameBufferObject::FrameBufferObject(int width, int height, int depthBufferBitDe
 	textureFormat(textureFormat),
 	textureType(textureType)
 {
-	glGenFramebuffers(1, &glID);
 	if (!glGenFramebuffers)
 		throw;
+	glGenFramebuffers(1, &glID);
 	if (depthBufferBitDepth || stencilBufferBitDepth)
 	{
 		GLenum format = 0;
@@ -55,12 +55,18 @@ void FrameBufferObject::AttachTexture(std::string name)
 	glGenTextures(1, &tex->glID);
 	glBindTexture(textureType, tex->glID);
 	glTexImage2D(textureType, 0, textureFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	GLuint attachPoint = GL_COLOR_ATTACHMENT0 + textures.size();
 	glBindFramebuffer(GL_FRAMEBUFFER, glID);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachPoint, GL_TEXTURE_2D, tex->glID, 0);
 	textures.push_back(tex);
 	glBindTexture(textureType, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	if (!CheckCompleteness())
+		throw;
 }
 
 GLuint FrameBufferObject::GetTexture(std::string name)
