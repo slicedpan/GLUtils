@@ -23,12 +23,10 @@ void QuadDrawer::DrawQuad(Vec2& min, Vec2& max)
 	instance->vertexData[3].position[1] = max[0];
 	
 	glBindVertexArray(instance->vaoID);
-
 	glBindBuffer(GL_ARRAY_BUFFER, instance->vboID);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * 4, instance->vertexData, GL_DYNAMIC_DRAW);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0);	
 
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void*)0);	
-	glBindVertexArray(0);
 }
 
 void QuadDrawer::Initialise()
@@ -39,26 +37,34 @@ void QuadDrawer::Initialise()
 	glGenVertexArrays(1, &instance->vaoID);
 	glBindVertexArray(instance->vaoID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, instance->iboID);
-	instance->indices = (unsigned short*)malloc(sizeof(unsigned short) * 6);
+	instance->indices = (unsigned char*)malloc(sizeof(unsigned char) * 6);
 	instance->indices[0] = 0;
 	instance->indices[1] = 1;
 	instance->indices[2] = 2;
 	instance->indices[3] = 0;
 	instance->indices[4] = 2;
 	instance->indices[5] = 3;
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * 6, instance->indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned char) * 6, instance->indices, GL_STATIC_DRAW);
 
 	instance->vertexData = (vertex*)malloc(sizeof(vertex) * 4);
 
 	instance->vertexData[0].texCoord[0] = 0.0;
 	instance->vertexData[0].texCoord[1] = 0.0;
+	instance->vertexData[0].position[0] = 0.0;
+	instance->vertexData[0].position[1] = 1.0;
 
+	instance->vertexData[1].texCoord[0] = 1.0;
+	instance->vertexData[1].texCoord[1] = 0.0;
 	instance->vertexData[1].texCoord[0] = 1.0;
 	instance->vertexData[1].texCoord[1] = 0.0;
 
 	instance->vertexData[2].texCoord[0] = 1.0;
 	instance->vertexData[2].texCoord[1] = 1.0;
+	instance->vertexData[2].texCoord[0] = 1.0;
+	instance->vertexData[2].texCoord[1] = 1.0;
 
+	instance->vertexData[3].texCoord[0] = 0.0;
+	instance->vertexData[3].texCoord[1] = 1.0;
 	instance->vertexData[3].texCoord[0] = 0.0;
 	instance->vertexData[3].texCoord[1] = 1.0;
 

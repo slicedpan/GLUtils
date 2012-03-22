@@ -21,7 +21,7 @@ private:
 	void CreateVBO();
 	unsigned int vboID;
 	unsigned int iboID;
-	unsigned short * indices;
+	unsigned char * indices;
 	vertex * vertexData;
 	unsigned int vaoID;
 };
