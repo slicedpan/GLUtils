@@ -25,5 +25,6 @@ private:
 	int height;
 	GLenum textureFormat;
 	GLenum textureType;
+	unsigned int texNum;
 };
 
