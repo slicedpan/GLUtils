@@ -5,11 +5,13 @@ FrameBufferObject::FrameBufferObject(int width, int height, int depthBufferBitDe
 	: width(width),
 	height(height),
 	textureFormat(textureFormat),
-	textureType(textureType)
+	textureType(textureType),
+	texNum(0)
 {
 	if (!glGenFramebuffers)
 		throw;
 	glGenFramebuffers(1, &glID);
+	glBindFramebuffer(GL_FRAMEBUFFER, glID);
 	if (depthBufferBitDepth || stencilBufferBitDepth)
 	{
 		GLenum format = 0;
@@ -39,9 +41,15 @@ FrameBufferObject::FrameBufferObject(int width, int height, int depthBufferBitDe
 			renderBuffers.push_back(id);
 			glBindRenderbuffer(GL_RENDERBUFFER, id);
 			glRenderbufferStorage(GL_RENDERBUFFER, format, width, height);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, id);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, id);			
+			
 		}		
 	}
+	int depthBits, stencilBits;
+	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_DEPTH_SIZE, &depthBits);
+	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_STENCIL_SIZE, &stencilBits);
+	printf("depthBits: %d, stencilBits %d\n", depthBits, stencilBits);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 FrameBufferObject::~FrameBufferObject(void)
@@ -57,9 +65,9 @@ void FrameBufferObject::AttachTexture(std::string name)
 	glTexImage2D(textureType, 0, textureFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	GLuint attachPoint = GL_COLOR_ATTACHMENT0 + textures.size();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	GLuint attachPoint = GL_COLOR_ATTACHMENT0 + texNum++;
 	glBindFramebuffer(GL_FRAMEBUFFER, glID);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachPoint, GL_TEXTURE_2D, tex->glID, 0);
 	textures.push_back(tex);
@@ -89,6 +97,24 @@ bool FrameBufferObject::CheckCompleteness()
 	glBindFramebuffer(GL_FRAMEBUFFER, glID);
 	GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	if (result != GL_FRAMEBUFFER_COMPLETE)
+	{
+		switch(result)
+		{
+		case GL_FRAMEBUFFER_UNDEFINED:
+			printf("Framebuffer undefined!\n");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+			printf("Framebuffer incomplete attachment!\n");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+			printf("Framebuffer incomplete, missing attachment!\n");
+			break;
+		default:
+			printf("Framebuffer incomplete!\n");
+			break;
+		}
+	}
 	return (result == GL_FRAMEBUFFER_COMPLETE);
 }
 
