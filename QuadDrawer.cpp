@@ -20,7 +20,7 @@ void QuadDrawer::DrawQuad(Vec2& min, Vec2& max)
 	instance->vertexData[2].position[1] = max[1];
 
 	instance->vertexData[3].position[0] = min[0];
-	instance->vertexData[3].position[1] = max[0];
+	instance->vertexData[3].position[1] = max[1];
 	
 	glBindVertexArray(instance->vaoID);
 	glBindBuffer(GL_ARRAY_BUFFER, instance->vboID);
