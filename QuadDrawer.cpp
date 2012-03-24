@@ -1,4 +1,5 @@
 #include "QuadDrawer.h"
+#include "ShaderManager.h"
 #include <cstdlib>
 #include <GL\glew.h>
 #include <svl\SVL.h>
@@ -7,6 +8,13 @@ bool QuadDrawer::initialised = false;
 QuadDrawer* QuadDrawer::instance = 0;
 
 void QuadDrawer::DrawQuad(Vec2& min, Vec2& max)
+{
+	if (!instance)
+		Initialise();
+	DrawQuad(min, max, *(instance->zero));
+}
+
+void QuadDrawer::DrawQuad(Vec2& min, Vec2& max, Vec2& pixSize)
 {
 	if (!instance)
 		Initialise();
@@ -21,6 +29,9 @@ void QuadDrawer::DrawQuad(Vec2& min, Vec2& max)
 
 	instance->vertexData[3].position[0] = min[0];
 	instance->vertexData[3].position[1] = max[1];
+
+	if (ShaderManager::GetSingletonPtr()->GetCurrent())
+		ShaderManager::GetSingletonPtr()->GetCurrent()->Uniforms("pixSize").SetValue(pixSize);
 	
 	glBindVertexArray(instance->vaoID);
 	glBindBuffer(GL_ARRAY_BUFFER, instance->vboID);
@@ -50,21 +61,13 @@ void QuadDrawer::Initialise()
 
 	instance->vertexData[0].texCoord[0] = 0.0;
 	instance->vertexData[0].texCoord[1] = 0.0;
-	instance->vertexData[0].position[0] = 0.0;
-	instance->vertexData[0].position[1] = 1.0;
 
-	instance->vertexData[1].texCoord[0] = 1.0;
-	instance->vertexData[1].texCoord[1] = 0.0;
 	instance->vertexData[1].texCoord[0] = 1.0;
 	instance->vertexData[1].texCoord[1] = 0.0;
 
 	instance->vertexData[2].texCoord[0] = 1.0;
 	instance->vertexData[2].texCoord[1] = 1.0;
-	instance->vertexData[2].texCoord[0] = 1.0;
-	instance->vertexData[2].texCoord[1] = 1.0;
 
-	instance->vertexData[3].texCoord[0] = 0.0;
-	instance->vertexData[3].texCoord[1] = 1.0;
 	instance->vertexData[3].texCoord[0] = 0.0;
 	instance->vertexData[3].texCoord[1] = 1.0;
 
@@ -72,10 +75,12 @@ void QuadDrawer::Initialise()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * 4, instance->vertexData, GL_DYNAMIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(2 * sizeof(float)));
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (char*)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (char*)0 + (2 * sizeof(float)));
 
 	glBindVertexArray(0);
+
+	instance->zero = new Vec2(0.0, 0.0);
 }
 
 void QuadDrawer::CleanUp()

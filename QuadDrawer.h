@@ -12,6 +12,7 @@ class QuadDrawer
 {
 public:
 	static void DrawQuad(Vec2& min, Vec2& max);
+	static void DrawQuad(Vec2& min, Vec2& max, Vec2& pixSize);
 	~QuadDrawer();
 private:
 	static bool initialised;
@@ -24,5 +25,6 @@ private:
 	unsigned char * indices;
 	vertex * vertexData;
 	unsigned int vaoID;
+	Vec2* zero;
 };
 

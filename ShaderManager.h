@@ -2,6 +2,7 @@
 
 #include <map>
 #include "Shader.h"
+#include <GL/glew.h>
 #include <string>
 
 typedef std::map<std::string, Shader*>::iterator shaderIterator;
@@ -18,6 +19,7 @@ public:
 		}
 		return instance; 
 	}
+	ShaderManager() : current(0) {}
 	Shader* operator[] (std::string name) {return shaders[name]; }
 	void Add(Shader* shader)
 	{
@@ -52,9 +54,23 @@ public:
 				printf("Shader: %s\nCompiledSuccessfully\n", it->second->GetName());
 		}
 	}
+	void ShaderActive(Shader* shader)
+	{
+		current = shader;
+	}
+	Shader* GetCurrent()
+	{
+		return current;
+	}
+	void UseFF()
+	{
+		current = 0;
+		glUseProgram(0);
+	}
 private:
 	static ShaderManager* instance;
 	std::map<std::string, Shader*> shaders;
+	Shader* current;
 	int index;
 };
 

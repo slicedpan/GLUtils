@@ -1,6 +1,10 @@
 #include "FrameBufferObject.h"
 #include "FBOTexture.h"
 
+int FrameBufferObject::screenHeight= -1;
+int FrameBufferObject::screenWidth = -1;
+bool FrameBufferObject::resetViewport = true;
+
 FrameBufferObject::FrameBufferObject(int width, int height, int depthBufferBitDepth, int stencilBufferBitDepth, GLenum textureFormat, GLenum textureType)
 	: width(width),
 	height(height),
@@ -58,6 +62,11 @@ FrameBufferObject::~FrameBufferObject(void)
 
 void FrameBufferObject::AttachTexture(std::string name)
 {
+	AttachTexture(name, GL_LINEAR, GL_LINEAR);
+}
+
+void FrameBufferObject::AttachTexture(std::string name, GLenum minFilter, GLenum magFilter)
+{
 	FBOTexture* tex = new FBOTexture();
 	tex->name = name;
 	glGenTextures(1, &tex->glID);
@@ -65,8 +74,8 @@ void FrameBufferObject::AttachTexture(std::string name)
 	glTexImage2D(textureType, 0, textureFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
 	GLuint attachPoint = GL_COLOR_ATTACHMENT0 + texNum++;
 	glBindFramebuffer(GL_FRAMEBUFFER, glID);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachPoint, GL_TEXTURE_2D, tex->glID, 0);
@@ -120,10 +129,20 @@ bool FrameBufferObject::CheckCompleteness()
 
 void FrameBufferObject::Bind()
 {
+	if (screenWidth < 0 && screenHeight < 0)
+	{
+		int viewport[4];
+		glGetIntegerv(GL_VIEWPORT, viewport);
+		screenWidth = viewport[2];
+		screenHeight = viewport[3];
+	}	
+	glViewport(0, 0, width, height);
 	glBindFramebuffer(GL_FRAMEBUFFER, glID);
 }
 
 void FrameBufferObject::Unbind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, screenWidth, screenHeight);
+	
 }

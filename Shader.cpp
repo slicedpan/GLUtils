@@ -139,6 +139,7 @@ char * getSourceFromFile(char* filename)
 void Shader::Use()
 {
 	glUseProgram(glID);
+	ShaderManager::GetSingletonPtr()->ShaderActive(this);
 }
 
 bool Shader::Reload()
