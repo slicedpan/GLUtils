@@ -18,6 +18,7 @@ public:
 	bool CheckCompleteness();
 	void Bind();
 	void Unbind();
+	void SetDrawBuffers(bool active);
 	static void SetResetViewportSize(bool active);
 	static void SetDefaultViewportSize(int height, int width);
 private:
@@ -32,5 +33,6 @@ private:
 	static int screenWidth;
 	static int screenHeight;
 	static bool resetViewport;
+	bool setDrawBuffers;
 };
 

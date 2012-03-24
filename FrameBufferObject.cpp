@@ -65,6 +65,11 @@ void FrameBufferObject::AttachTexture(std::string name)
 	AttachTexture(name, GL_LINEAR, GL_LINEAR);
 }
 
+void FrameBufferObject::SetDrawBuffers(bool active)
+{
+	setDrawBuffers = active;
+}
+
 void FrameBufferObject::AttachTexture(std::string name, GLenum minFilter, GLenum magFilter)
 {
 	FBOTexture* tex = new FBOTexture();
@@ -138,11 +143,21 @@ void FrameBufferObject::Bind()
 	}	
 	glViewport(0, 0, width, height);
 	glBindFramebuffer(GL_FRAMEBUFFER, glID);
+	if (setDrawBuffers)
+	{
+		GLenum* buffers;
+		buffers = (GLenum*)malloc(sizeof(GLenum) * texNum);
+		for (int i = 0; i < texNum; ++i)
+		{
+			buffers[i] = GL_COLOR_ATTACHMENT0 + i;
+		}
+		glDrawBuffers(texNum, buffers);
+	}
 }
 
 void FrameBufferObject::Unbind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, screenWidth, screenHeight);
-	
+	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 }

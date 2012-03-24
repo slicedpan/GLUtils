@@ -25,7 +25,7 @@ public:
 	{
 		if (!strcmp(shader->GetName(), ""))
 		{
-			char buf[16];
+			char buf[32];
 			sprintf(buf, "unnamed%d", index++);
 			shader->SetName(buf);			
 		}
