@@ -17,7 +17,10 @@ void BasicTexture::LoadFromFile()
 {
 	FILE* file = fopen(this->filename, "rb");
 	if (!file)
+	{
+		printf("couldn't open file: %s\n", this->filename);
 		return;
+	}
 	imgData = stbi_load_from_file(file, &width, &height, &components, 4);
 	fclose(file);
 	glGenTextures(1, &glID);
