@@ -104,7 +104,7 @@ void VBOMesh::Load()
 			}
 			meshDataIndex += vertexComponents;
 			
-			if (indexFormat = GL_UNSIGNED_INT)
+			if (indexFormat == GL_UNSIGNED_INT)
 			{
 				longIndexData[(i * 3) + j] = indexCount++;
 			}
@@ -123,9 +123,9 @@ void VBOMesh::Load()
 		Vec3 v1, v2, v3;
 		for (int i = 0; i < obj->faceCount; ++i)
 		{
-			v1 = FromFloatV(meshData + (vertexComponents * i * 3));
-			v2 = FromFloatV(meshData + (vertexComponents * (i * 3 + 1)));
-			v3 = FromFloatV(meshData + (vertexComponents * (i * 3 + 2)));
+			v1 = FromFloatV(meshData + obj->faceList[i]->vertex_index[0]);
+			v2 = FromFloatV(meshData + obj->faceList[i]->vertex_index[1]);
+			v3 = FromFloatV(meshData + obj->faceList[i]->vertex_index[2]);
 			Vec3 normal = -norm(cross(v1 - v2, v2 - v3));
 			memcpy(meshData + (vertexComponents * i * 3) + 3, normal.Ref(), sizeof(float) * 3);
 		}
@@ -149,7 +149,7 @@ void VBOMesh::Load()
 	if (hasNormals)
 	{
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertexSize, (void*)(3 * sizeof(float)));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertexSize, (char*)0 + (3 * sizeof(float)));
 	}
 
 	glBindVertexArray(0);
