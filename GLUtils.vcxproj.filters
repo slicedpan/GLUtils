@@ -90,6 +90,9 @@
     <ClCompile Include="glm\glmimg_sim.c">
       <Filter>Source Files\glm</Filter>
     </ClCompile>
+    <ClCompile Include="Colours.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CubeMap.h">
@@ -142,6 +145,9 @@
     </ClInclude>
     <ClInclude Include="glm\glmint.h">
       <Filter>Header Files\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="Colours.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

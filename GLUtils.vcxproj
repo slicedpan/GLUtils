@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Colours.cpp" />
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="FrameBufferObject.cpp" />
     <ClCompile Include="QuadDrawer.cpp" />
@@ -34,6 +35,7 @@
     <ClCompile Include="VBOMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Colours.h" />
     <ClInclude Include="CubeMap.h" />
     <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="FBOTexture.h" />
