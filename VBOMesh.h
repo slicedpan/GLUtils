@@ -2,6 +2,19 @@
 
 class objLoader;
 
+#define HASNORMALS 1
+#define HASTEXTURECOORDS 2
+
+#define VF_POSITION 0
+#define VF_POSITIONNORMAL HASNORMALS
+#define VF_POSITIONTEXCOORD HASTEXTURECOORDS
+#define VF_POSITIONNORMALTEXCOORD (HASNORMALS & HASTEXTURECOORDS)
+
+struct Triangle
+{
+	unsigned int index[3];
+};
+
 struct VertexPosition
 {
 	float position[3];
@@ -50,6 +63,9 @@ public:
 	void Print();
 	void Load();
 	void CleanUp();
+	template <typename T> 
+	T* GetVertexData(int index);
+	Triangle GetTriangle(int triIndex);
 private:
 	objLoader* obj;
 	float* meshData;
@@ -69,4 +85,13 @@ private:
 	void GenerateCache();
 	void InitialiseVAO();
 };
+
+template <typename T>
+T* VBOMesh::GetVertexData(int index)
+{
+	char* ptr = (char*)meshData;
+	ptr += meshInfo.vertexSize * index;
+	return (T*)ptr;
+}
+
 

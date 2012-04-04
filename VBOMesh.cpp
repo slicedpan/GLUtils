@@ -4,8 +4,7 @@
 #include <GL/glew.h>
 #include <cstdlib>
 
-#define HASNORMALS 1
-#define HASTEXTURECOORDS 2
+
 
 Vec3 FromFloatV(float * ptr)
 {
@@ -50,7 +49,7 @@ bool VBOMesh::LoadCached()
 
 	InitialiseVAO();
 
-	return false;
+	return true;
 }
 
 void VBOMesh::GenerateCache()
@@ -325,11 +324,59 @@ void VBOMesh::Draw()
 	glBindVertexArray(0);
 }
 
+Triangle VBOMesh::GetTriangle(int triIndex)
+{
+	Triangle t;
+	switch (meshInfo.indexFormat)
+	{
+	case GL_UNSIGNED_INT:
+		memcpy(t.index, longIndexData + triIndex * 3, sizeof(unsigned int) * 3); 
+		break;
+	case GL_UNSIGNED_SHORT:
+		t.index[0] = *(indexData + triIndex * 3);
+		t.index[1] = *(indexData + triIndex * 3 + 1);
+		t.index[2] = *(indexData + triIndex * 3 + 2);
+		break;
+	case GL_UNSIGNED_BYTE:
+		t.index[0] = *(byteIndexData + triIndex * 3);
+		t.index[1] = *(byteIndexData + triIndex * 3 + 1);
+		t.index[2] = *(byteIndexData + triIndex * 3 + 2);
+		break;
+	}
+	return t;
+}
+
 void VBOMesh::DrawImmediate()
 {
 	if (!loaded)
 		return;
-	obj->Draw();
+	glBegin(GL_TRIANGLES);
+	for (int i = 0; i < meshInfo.triCount; ++i)
+	{
+		Triangle t = GetTriangle(i);
+		if (meshInfo.componentFlags == HASTEXTURECOORDS)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				VertexPositionTexcoord* vpt = GetVertexData<VertexPositionTexcoord>(t.index[j]);
+				glVertex3fv(vpt->position);
+				glTexCoord2fv(vpt->texCoord);
+			}
+		}
+		else
+		{	
+			for (int j = 0; j < 3; ++j)
+			{
+				VertexPositionNormalTexcoord* vpnt = GetVertexData<VertexPositionNormalTexcoord>(t.index[j]);
+				glVertex3fv(vpnt->position);
+				if (hasNormals)
+					glNormal3fv(vpnt->normal);
+				if (hasTextureCoords)
+					glTexCoord2fv(vpnt->texCoord);
+			}
+		}
+	}
+	glEnd();
 }
 
 void VBOMesh::Print()

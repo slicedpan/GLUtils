@@ -60,35 +60,37 @@ FrameBufferObject::~FrameBufferObject(void)
 {
 }
 
-void FrameBufferObject::AttachTexture(std::string name)
-{
-	AttachTexture(name, GL_LINEAR, GL_LINEAR);
-}
-
 void FrameBufferObject::SetDrawBuffers(bool active)
 {
 	setDrawBuffers = active;
 }
 
-void FrameBufferObject::AttachTexture(std::string name, GLenum minFilter, GLenum magFilter)
+void FrameBufferObject::AttachDepthTexture(std::string name, GLenum magFilter, GLenum minFilter, GLenum depthFormat)
+{
+	AttachTextureTo(name, magFilter, minFilter, GL_DEPTH_ATTACHMENT, depthFormat, GL_DEPTH_COMPONENT);
+}
+
+void FrameBufferObject::AttachTextureTo(std::string name, GLenum magFilter, GLenum minFilter, GLenum attachmentPoint, GLenum texFormat, GLenum extFormat)
 {
 	FBOTexture* tex = new FBOTexture();
 	tex->name = name;
 	glGenTextures(1, &tex->glID);
 	glBindTexture(textureType, tex->glID);
-	glTexImage2D(textureType, 0, textureFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(textureType, 0, texFormat, width, height, 0, extFormat, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-	GLuint attachPoint = GL_COLOR_ATTACHMENT0 + texNum++;
 	glBindFramebuffer(GL_FRAMEBUFFER, glID);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachPoint, GL_TEXTURE_2D, tex->glID, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentPoint, GL_TEXTURE_2D, tex->glID, 0);
 	textures.push_back(tex);
 	glBindTexture(textureType, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	if (!CheckCompleteness())
-		throw;
+}
+
+void FrameBufferObject::AttachTexture(std::string name, GLenum minFilter, GLenum magFilter)
+{
+	AttachTextureTo(name, magFilter, minFilter, GL_COLOR_ATTACHMENT0 + texNum++, textureFormat);
 }
 
 GLuint FrameBufferObject::GetTexture(std::string name)
