@@ -19,11 +19,11 @@
     <Filter Include="Source Files\ObjLoader">
       <UniqueIdentifier>{a95589c8-35ca-4ae2-87e0-972bac4fde03}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\glm">
-      <UniqueIdentifier>{95cd6386-1097-4597-81ea-a5840ec529f5}</UniqueIdentifier>
+    <Filter Include="Header Files\GLGUI">
+      <UniqueIdentifier>{4c3d7f5e-6fea-4ebc-a8ee-b4b4ae7b8bfa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\glm">
-      <UniqueIdentifier>{d52828d8-e71a-4c15-9d0b-4c89bd34d135}</UniqueIdentifier>
+    <Filter Include="Source Files\GLGUI">
+      <UniqueIdentifier>{bf887cca-fd02-43b7-b38b-07a2e27ccab2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,9 +31,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="stb_image.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Uniform.cpp">
@@ -66,31 +63,34 @@
     <ClCompile Include="VBOMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="glm\glm.c">
-      <Filter>Source Files\glm</Filter>
-    </ClCompile>
-    <ClCompile Include="glm\glm_util.c">
-      <Filter>Source Files\glm</Filter>
-    </ClCompile>
-    <ClCompile Include="glm\glmimg.c">
-      <Filter>Source Files\glm</Filter>
-    </ClCompile>
-    <ClCompile Include="glm\glmimg_devil.c">
-      <Filter>Source Files\glm</Filter>
-    </ClCompile>
-    <ClCompile Include="glm\glmimg_jpg.c">
-      <Filter>Source Files\glm</Filter>
-    </ClCompile>
-    <ClCompile Include="glm\glmimg_png.c">
-      <Filter>Source Files\glm</Filter>
-    </ClCompile>
-    <ClCompile Include="glm\glmimg_sdl.c">
-      <Filter>Source Files\glm</Filter>
-    </ClCompile>
-    <ClCompile Include="glm\glmimg_sim.c">
-      <Filter>Source Files\glm</Filter>
-    </ClCompile>
     <ClCompile Include="Colours.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FBOManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GLGUI\fonttex.cpp">
+      <Filter>Source Files\GLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GLGUI\GUIBase.cpp">
+      <Filter>Source Files\GLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GLGUI\GUITray.cpp">
+      <Filter>Source Files\GLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GLGUI\GUIElement.cpp">
+      <Filter>Source Files\GLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GLGUI\GUITextBox.cpp">
+      <Filter>Source Files\GLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GLGUI\Primitives.cpp">
+      <Filter>Source Files\GLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GLGUI\Slider.cpp">
+      <Filter>Source Files\GLGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_image.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -99,9 +99,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Uniform.h">
@@ -116,13 +113,7 @@
     <ClInclude Include="BasicTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FBOTexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="QuadDrawer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugDraw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ObjLoader\obj_parser.h">
@@ -140,13 +131,49 @@
     <ClInclude Include="VBOMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="glm\glm.h">
-      <Filter>Header Files\glm</Filter>
-    </ClInclude>
-    <ClInclude Include="glm\glmint.h">
-      <Filter>Header Files\glm</Filter>
-    </ClInclude>
     <ClInclude Include="Colours.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FBOManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugDraw.h">
+      <Filter>Header Files\GLGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GLGUI\fonttex.h">
+      <Filter>Header Files\GLGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GLGUI\glFunctions.h">
+      <Filter>Header Files\GLGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GLGUI\GUIBase.h">
+      <Filter>Header Files\GLGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GLGUI\GUIElement.h">
+      <Filter>Header Files\GLGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GLGUI\GUITextBox.h">
+      <Filter>Header Files\GLGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GLGUI\GUITray.h">
+      <Filter>Header Files\GLGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GLGUI\Primitives.h">
+      <Filter>Header Files\GLGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GLGUI\Slider.h">
+      <Filter>Header Files\GLGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GLGUI\VarChange.h">
+      <Filter>Header Files\GLGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GLGUI\VarPrint.h">
+      <Filter>Header Files\GLGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GLGUI\VarWatch.h">
+      <Filter>Header Files\GLGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

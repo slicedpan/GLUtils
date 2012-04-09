@@ -25,7 +25,6 @@ void BasicTexture::LoadFromFile()
 	fclose(file);
 	glGenTextures(1, &glID);
 	glBindTexture(GL_TEXTURE_2D, glID);
-	//gluBuild2DMipmaps(GL_TEXTURE_2D, 4, width, height, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
 	glEnable(GL_TEXTURE_2D);
 	glGenerateMipmap(GL_TEXTURE_2D);

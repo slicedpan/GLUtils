@@ -50,3 +50,4 @@ void Uniform::SetValue(float floatVal)
 		glUniform1f(id, floatVal);
 }
 
+

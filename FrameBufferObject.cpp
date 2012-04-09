@@ -1,19 +1,32 @@
 #include "FrameBufferObject.h"
-#include "FBOTexture.h"
+#include "FBOManager.h"
 
 int FrameBufferObject::screenHeight= -1;
 int FrameBufferObject::screenWidth = -1;
 bool FrameBufferObject::resetViewport = true;
 
-FrameBufferObject::FrameBufferObject(int width, int height, int depthBufferBitDepth, int stencilBufferBitDepth, GLenum textureFormat, GLenum textureType)
+FrameBufferObject::FrameBufferObject(int width, int height, int depthBufferBitDepth, int stencilBufferBitDepth, GLenum textureFormat, GLenum textureType, std::string name)
 	: width(width),
 	height(height),
 	textureFormat(textureFormat),
 	textureType(textureType),
-	texNum(0)
+	texNum(0),
+	nextIndex(0)
 {
 	if (!glGenFramebuffers)
 		throw;
+
+	if (name == "")
+	{
+		char buf[64];
+		sprintf(buf, "unnamed%d", ++nextIndex);
+		this->name = buf;
+	}
+	else
+	{
+		this->name = name;
+	}
+
 	glGenFramebuffers(1, &glID);
 	glBindFramebuffer(GL_FRAMEBUFFER, glID);
 	if (depthBufferBitDepth || stencilBufferBitDepth)
@@ -54,6 +67,9 @@ FrameBufferObject::FrameBufferObject(int width, int height, int depthBufferBitDe
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_STENCIL_SIZE, &stencilBits);
 	printf("depthBits: %d, stencilBits %d\n", depthBits, stencilBits);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	FBOManager::GetSingletonPtr()->AddFBO(this);
+
 }
 
 FrameBufferObject::~FrameBufferObject(void)
@@ -93,20 +109,31 @@ void FrameBufferObject::AttachTexture(std::string name, GLenum minFilter, GLenum
 	AttachTextureTo(name, magFilter, minFilter, GL_COLOR_ATTACHMENT0 + texNum++, textureFormat);
 }
 
-GLuint FrameBufferObject::GetTexture(std::string name)
+FBOTexture* FrameBufferObject::GetTexture(std::string name)
 {
 	for (int i = 0; i < textures.size(); ++i)
 	{
 		if (!name.compare(textures[i]->name))
-			return textures[i]->glID;
+			return textures[i];
 	}
 	return 0;
 }
 
-GLuint FrameBufferObject::GetTexture(GLuint index)
+FBOTexture* FrameBufferObject::GetTexture(GLuint index)
 {
-	return textures[index]->glID;
+	return textures[index];
 }
+
+GLuint FrameBufferObject::GetTextureID(std::string name)
+{
+	return GetTexture(name)->glID;
+}
+
+GLuint FrameBufferObject::GetTextureID(GLuint index)
+{
+	return GetTexture(index)->glID;
+}
+
 
 bool FrameBufferObject::CheckCompleteness()
 {

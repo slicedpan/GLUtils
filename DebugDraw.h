@@ -1,3 +1,6 @@
+#ifndef DEBUGDRAW_H
+#define DEBUGDRAW_H
+
 #include <svl\SVL.h>
 #include <GL\glew.h>
 #include <svl\SVLgl.h>
@@ -24,3 +27,5 @@ inline void DrawArrow(Vec3& point, Vec3& direction, Vec3& colour)
 	glVertex(point + (direction * 0.6) - (v1 * 0.3));		
 	glEnd();
 }
+
+#endif

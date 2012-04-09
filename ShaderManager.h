@@ -35,12 +35,14 @@ public:
 	shaderIterator EndIterator() { return shaders.end(); }
 	void CompileShaders()
 	{
+		printf("Compiling Shaders...");
 		for (shaderIterator it = BeginIterator(); it != EndIterator(); ++it)
 		{
+			printf("%s:\n", it->second->GetName());
 			if (!it->second->Compile())
-				printf("%s", it->second->GetErrorLog());
+				printf("%s", it->second->GetErrorLog());		
 			else
-				printf("Shader: %s\nCompiled Successfully\n", it->second->GetName());
+				printf("Compiled Successfully\n", it->second->GetName());
 			
 		}
 	}
