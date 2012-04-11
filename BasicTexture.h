@@ -9,7 +9,7 @@ public:
 	unsigned int GetId() { return glID; }
 	void Load();
 protected:
-	char filename[128];
+	char* filename;
 	virtual void LoadFromFile();
 	unsigned char* imgData;
 	int height;
