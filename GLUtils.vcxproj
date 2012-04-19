@@ -30,9 +30,10 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="BasicTexture.cpp" />
+    <ClCompile Include="StaticMesh.cpp" />
     <ClCompile Include="stb_image.c" />
     <ClCompile Include="Uniform.cpp" />
-    <ClCompile Include="VBOMesh.cpp" />
+    <ClCompile Include="SubMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Colours.h" />
@@ -51,6 +52,7 @@
     <ClInclude Include="GLGUI\VarChange.h" />
     <ClInclude Include="GLGUI\VarPrint.h" />
     <ClInclude Include="GLGUI\VarWatch.h" />
+    <ClInclude Include="NamedCollection.h" />
     <ClInclude Include="QuadDrawer.h" />
     <ClInclude Include="ObjLoader\list.h" />
     <ClInclude Include="ObjLoader\objLoader.h" />
@@ -59,9 +61,10 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="BasicTexture.h" />
+    <ClInclude Include="StaticMesh.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Uniform.h" />
-    <ClInclude Include="VBOMesh.h" />
+    <ClInclude Include="SubMesh.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0A23B455-E6FD-4075-96D4-A14083E09A76}</ProjectGuid>

@@ -1,4 +1,4 @@
-#include "VBOMesh.h"
+#include "SubMesh.h"
 #include "ObjLoader/objLoader.h"
 #include "DebugDraw.h"
 #include <GL/glew.h>
@@ -11,36 +11,31 @@ Vec3 FromFloatV(float * ptr)
 	return Vec3(ptr[0], ptr[1], ptr[2]);
 }
 
-bool VBOMesh::LoadCached()
+void SubMesh::LoadCached(unsigned char* data)	//we want to copy the data so caller can free it afterwards
 {
-	char* cachedFilename = (char*)malloc(sizeof(char) * strlen(filename) + 7);
-	sprintf(cachedFilename, "%s.cache", filename);
-	FILE* cacheFile = fopen(cachedFilename, "rb");
-	if (!cacheFile)
-		return false;
 
-	fread(&meshInfo, sizeof(MeshInfo), 1, cacheFile);
-	if (meshInfo.vertexSize != meshInfo.vertexComponents * 4)
-	{
-		fclose(cacheFile);
-		return false;
-	}
+	int offset = 0;
+
+	memcpy(&meshInfo, data, sizeof(MeshInfo));
+	offset += sizeof(MeshInfo);	
+
 	meshData = (float*)malloc(meshInfo.vertexCount * meshInfo.vertexSize);
-	fread(meshData, meshInfo.vertexSize, meshInfo.vertexCount, cacheFile);
+	memcpy(meshData, data + offset, meshInfo.vertexCount * meshInfo.vertexSize);
+	offset += meshInfo.vertexCount * meshInfo.vertexSize;
 
 	switch (meshInfo.indexFormat)
 	{
 	case GL_UNSIGNED_INT:
 		longIndexData = (unsigned int*)malloc(sizeof(unsigned int) * 3 * meshInfo.triCount);
-		fread(longIndexData, sizeof(unsigned int), 3 * meshInfo.triCount, cacheFile);
+		memcpy(longIndexData, data + offset, sizeof(unsigned int) * 3 * meshInfo.triCount);
 		break;
 	case GL_UNSIGNED_SHORT:
 		indexData = (unsigned short*)malloc(sizeof(unsigned short) * 3 * meshInfo.triCount);
-		fread(indexData, sizeof(unsigned short), 3 * meshInfo.triCount, cacheFile);
+		memcpy(indexData, data + offset, sizeof(unsigned short) * 3 * meshInfo.triCount);
 		break;
 	case GL_UNSIGNED_BYTE:
 		byteIndexData = (unsigned char*)malloc(sizeof(unsigned char) * 3 * meshInfo.triCount);
-		fread(byteIndexData, sizeof(unsigned char), 3 * meshInfo.triCount, cacheFile);
+		memcpy(byteIndexData, data + offset, sizeof(unsigned char) * 3 * meshInfo.triCount);
 		break;
 	}
 
@@ -48,52 +43,69 @@ bool VBOMesh::LoadCached()
 	hasTextureCoords = meshInfo.componentFlags & HASTEXTURECOORDS;
 
 	InitialiseVAO();
-
-	return true;
 }
 
-void VBOMesh::GenerateCache()
+SubMeshBlock SubMesh::GenerateCache()
 {
-	char* cachedFilename = (char*)malloc(sizeof(char) * strlen(filename) + 7);
-	sprintf(cachedFilename, "%s.cache", filename);
-	FILE* cacheFile = fopen(cachedFilename, "wb");
-	if (!cacheFile)
-		return;
-	fwrite(&meshInfo, sizeof(MeshInfo), 1, cacheFile);	//header
+	
+	SubMeshBlock smb;
 
-	fwrite(meshData, meshInfo.vertexSize, meshInfo.vertexCount, cacheFile);	//vertex data
+	smb.size = 0;
+
+	smb.size += sizeof(MeshInfo);
+
+	smb.size += meshInfo.vertexSize * meshInfo.vertexCount;
+	size_t indexSize;
+
+	switch (meshInfo.indexFormat)
+	{
+	case GL_UNSIGNED_INT:
+		indexSize = sizeof(unsigned int);
+		
+		break;
+	case GL_UNSIGNED_SHORT:
+		indexSize = sizeof(unsigned short);
+		break;
+	case GL_UNSIGNED_BYTE:
+		indexSize = sizeof(unsigned char);
+		break;
+	}
+
+	smb.size += indexSize * meshInfo.triCount * 3;
+
+	smb.data = (unsigned char*)malloc(smb.size);
+
+	int offset = 0;
+
+	memcpy(smb.data, (void*)&meshInfo, sizeof(meshInfo));
+
+	offset += sizeof(meshInfo);
+
+	memcpy(smb.data + offset, meshData, meshInfo.vertexCount * meshInfo.vertexSize);
+
+	offset += meshInfo.vertexCount * meshInfo.vertexSize;	
 
 	switch (meshInfo.indexFormat)	//index data
 	{
 	case GL_UNSIGNED_INT:
-		fwrite(longIndexData, sizeof(unsigned int), meshInfo.triCount * 3, cacheFile);
+		memcpy(smb.data, longIndexData, indexSize * meshInfo.triCount * 3);
 		break;
 	case GL_UNSIGNED_SHORT:
-		fwrite(indexData, sizeof(unsigned short), meshInfo.triCount * 3, cacheFile);
+		memcpy(smb.data, indexData, indexSize * meshInfo.triCount * 3);
 		break;
 	case GL_UNSIGNED_BYTE:
+		memcpy(smb.data, byteIndexData, indexSize * meshInfo.triCount * 3);
 		break;
 	}
-	fclose(cacheFile);
+
+	return smb;
+
 }
 
-void VBOMesh::Load()
+void SubMesh::LoadObj(objLoader* obj, bool smoothNormals, bool generateNormals)
 {
-	
-	if (LoadCached())
-		return;
 
 	memset(&meshInfo, 0, sizeof(MeshInfo));
-
-	obj = new objLoader();
-
-	if (!obj->load(filename))
-	{
-		meshInfo.triCount = 0;
-		meshInfo.vertexCount = 0;
-		vaoID = 0;
-		return;
-	}	
 
 	glGenVertexArrays(1, &vaoID);
 
@@ -218,10 +230,9 @@ void VBOMesh::Load()
 		meshInfo.componentFlags |= HASTEXTURECOORDS;
 
 	InitialiseVAO();	
-	GenerateCache();
 }
 
-void VBOMesh::InitialiseVAO()
+void SubMesh::InitialiseVAO()
 {
 	glGenBuffers(1, &bufID);
 	glGenBuffers(1, &indexBufID);
@@ -265,11 +276,9 @@ void VBOMesh::InitialiseVAO()
 	loaded = true;
 }
 
-VBOMesh::VBOMesh(char * filename, bool smoothNormals, bool generateNormals)
+SubMesh::SubMesh()
 	: hasNormals(false),
 	hasTextureCoords(false),
-	generateNormals(generateNormals),
-	filename(filename),
 	meshData(0),
 	indexData(0),
 	vaoID(0),
@@ -277,10 +286,10 @@ VBOMesh::VBOMesh(char * filename, bool smoothNormals, bool generateNormals)
 	indexBufID(0),
 	loaded(false)
 {
-	
+
 }
 
-void VBOMesh::CleanUp()
+void SubMesh::CleanUp()
 {
 	if (meshData)
 	{
@@ -310,12 +319,12 @@ void VBOMesh::CleanUp()
 	loaded = false;
 }
 
-VBOMesh::~VBOMesh(void)
+SubMesh::~SubMesh(void)
 {
 	delete obj;
 }
 
-void VBOMesh::Draw()
+void SubMesh::Draw()
 {
 	if (!loaded)
 		return;
@@ -324,7 +333,7 @@ void VBOMesh::Draw()
 	glBindVertexArray(0);
 }
 
-Triangle VBOMesh::GetTriangle(int triIndex)
+Triangle SubMesh::GetTriangle(int triIndex)
 {
 	Triangle t;
 	switch (meshInfo.indexFormat)
@@ -346,7 +355,7 @@ Triangle VBOMesh::GetTriangle(int triIndex)
 	return t;
 }
 
-void VBOMesh::DrawImmediate()
+void SubMesh::DrawImmediate()
 {
 	if (!loaded)
 		return;
@@ -379,7 +388,7 @@ void VBOMesh::DrawImmediate()
 	glEnd();
 }
 
-void VBOMesh::Print()
+void SubMesh::Print()
 {
 	for (int i = 0; i < meshInfo.triCount; ++i)
 	{

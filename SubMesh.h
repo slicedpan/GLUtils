@@ -49,11 +49,17 @@ struct MeshInfo
 	unsigned int componentFlags;
 };
 
-class VBOMesh
+struct SubMeshBlock
+{
+	size_t size;
+	unsigned char* data;
+};
+
+class SubMesh
 {
 public:
-	VBOMesh(char * filename, bool smoothNormals, bool generateNormals);
-	~VBOMesh(void);
+	SubMesh();
+	~SubMesh(void);
 	bool HasNormals() { return hasNormals; }
 	bool HasTextureCoords() { return hasTextureCoords; }
 	unsigned int GetNumVertices() { return meshInfo.vertexCount; }
@@ -61,8 +67,10 @@ public:
 	void Draw();
 	void DrawImmediate();
 	void Print();
-	void Load();
+	void LoadObj(objLoader* obj, bool smoothNormals, bool generateNormals);
 	void CleanUp();
+	void LoadCached(unsigned char* data);
+	SubMeshBlock GenerateCache();
 	template <typename T> 
 	T* GetVertexData(int index);
 	Triangle GetTriangle(int triIndex);
@@ -73,21 +81,17 @@ private:
 	unsigned short* indexData;
 	unsigned int* longIndexData;
 	bool hasNormals;
-	bool hasTextureCoords;
-	bool generateNormals;
-	char* filename;
+	bool hasTextureCoords;	
 	MeshInfo meshInfo;
 	unsigned int bufID;
 	unsigned int indexBufID;
 	unsigned int vaoID;
-	bool loaded;
-	bool LoadCached();
-	void GenerateCache();
+	bool loaded;	
 	void InitialiseVAO();
 };
 
 template <typename T>
-T* VBOMesh::GetVertexData(int index)
+T* SubMesh::GetVertexData(int index)
 {
 	char* ptr = (char*)meshData;
 	ptr += meshInfo.vertexSize * index;
