@@ -18,7 +18,7 @@ void StaticMesh::LoadObj(std::string filename, bool smoothNormals, bool generate
 	{
 		SubMesh* subMesh = new SubMesh();
 		subMesh->LoadObj(obj, smoothNormals, generateNormals);
-		SubMeshes.Add("submesh0", subMesh);
+		SubMeshes.Add("submesh0", subMesh);		
 		return;
 	}
 }

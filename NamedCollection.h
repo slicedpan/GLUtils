@@ -52,7 +52,7 @@ public:
 		}
 	}
 	int Count() { return byIndex.size(); }
-private:
+private:	
 	std::vector<std::string> names;
 	std::vector<T> byIndex;
 };
