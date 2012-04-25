@@ -11,16 +11,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Colours.cpp" />
+    <ClCompile Include="BasicEngine.cpp" />
+    <ClCompile Include="Camera\CameraController.cpp" />
+    <ClCompile Include="Camera\Camera.cpp" />
+    <ClCompile Include="Colour.cpp" />
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="FBOManager.cpp" />
     <ClCompile Include="FrameBufferObject.cpp" />
+    <ClCompile Include="GLFWKeyListener.cpp" />
+    <ClCompile Include="GLFW\GLFWEngine.cpp" />
     <ClCompile Include="GLGUI\fonttex.cpp" />
     <ClCompile Include="GLGUI\GUIBase.cpp" />
     <ClCompile Include="GLGUI\GUIElement.cpp" />
     <ClCompile Include="GLGUI\GUITextBox.cpp" />
     <ClCompile Include="GLGUI\GUITray.cpp" />
     <ClCompile Include="GLGUI\Primitives.cpp" />
+    <ClCompile Include="GLGUI\shaders.cpp" />
     <ClCompile Include="GLGUI\Slider.cpp" />
     <ClCompile Include="QuadDrawer.cpp" />
     <ClCompile Include="ObjLoader\list.cpp" />
@@ -36,22 +42,28 @@
     <ClCompile Include="SubMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Colours.h" />
+    <ClInclude Include="BasicEngine.h" />
+    <ClInclude Include="Camera\CameraController.h" />
+    <ClInclude Include="Camera\Camera.h" />
+    <ClInclude Include="Colour.h" />
     <ClInclude Include="CubeMap.h" />
     <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="FBOManager.h" />
     <ClInclude Include="FrameBufferObject.h" />
+    <ClInclude Include="GLFWKeyListener.h" />
+    <ClInclude Include="GLFW\GLFWEngine.h" />
     <ClInclude Include="GLGUI\fonttex.h" />
-    <ClInclude Include="GLGUI\glFunctions.h" />
     <ClInclude Include="GLGUI\GUIBase.h" />
     <ClInclude Include="GLGUI\GUIElement.h" />
     <ClInclude Include="GLGUI\GUITextBox.h" />
     <ClInclude Include="GLGUI\GUITray.h" />
     <ClInclude Include="GLGUI\Primitives.h" />
+    <ClInclude Include="GLGUI\shaderDefs.h" />
     <ClInclude Include="GLGUI\Slider.h" />
     <ClInclude Include="GLGUI\VarChange.h" />
     <ClInclude Include="GLGUI\VarPrint.h" />
     <ClInclude Include="GLGUI\VarWatch.h" />
+    <ClInclude Include="MiscUtils.h" />
     <ClInclude Include="NamedCollection.h" />
     <ClInclude Include="QuadDrawer.h" />
     <ClInclude Include="ObjLoader\list.h" />

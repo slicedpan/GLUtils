@@ -1,7 +1,10 @@
 
 #include <svl\SVL.h>
-#include "glFunctions.h"
+#include <GL\glew.h>
+#include "../QuadDrawer.h"
+#include "../Shader.h"
 #include "fonttex.h"
+#include "shaderDefs.h"
 
 //void PrintText(Vec2 pos, const char* text, Vec4& colour)
 //{
@@ -16,9 +19,16 @@
 //}
 
 GLuint fontTex = 0;
-bool fontInitialised = false;
+bool textInitialised = false;
 
-void SetupFont()
+Shader* textDraw = 0;
+
+void SetTextShader(Shader* shader)
+{
+	textDraw = shader;
+}
+
+void SetupText()
 {
 	unsigned char* buf = (unsigned char*)malloc(sizeof(unsigned char) * 131072);
 	for (int i = 0; i < 32768; ++i)
@@ -36,33 +46,40 @@ void SetupFont()
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);	
 	free(buf);
-	fontInitialised = true;
+
+	if (!textDraw)
+	{
+		textDraw->SetSource(textDrawVertexSource, textDrawFragmentSource);
+		if (!textDraw->Compile())
+			printf("%s", textDraw->GetErrorLog());
+	}
+
+	textInitialised = true;
 }
 
 float offset = 1.0 / 256.0;
 
-void PrintText(Vec2 pos, const char* text, Vec4& colour)
+void PrintText(Vec2& pos, const char* text, Vec4& colour)
 {
-	glEnable(GL_TEXTURE_2D);
+	if (!textInitialised)
+		SetupText();
+
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fontTex);
-	if (!fontInitialised)
-		SetupFont();
-	while (*text)
-	{		
-		glBegin(GL_QUADS);
-		glTexCoord2f((*text) * offset, 0.0);
-		glVertex2f(pos[0], pos[1]);
-		glTexCoord2f((*text + 1) * offset, 0.0);
-		glVertex2f(pos[0] + 8, pos[1]);
-		glTexCoord2f((*text + 1) * offset, 1.0);
-		glVertex2f(pos[0] + 8, pos[1] + 16);
-		glTexCoord2f((*text) * offset, 1.0);
-		glVertex2f(pos[0], pos[1] + 16);
-		glEnd();
-		pos += Vec2(7, 0);
-		++text;
-	}
-	glDisable(GL_TEXTURE_2D);
+
+	int numChars = strlen(text);
+	int numInts = (numChars / 4) + 1;
+	int* uniformArray = (int*)malloc(sizeof(int) * numInts);
+	memset(uniformArray, 0, sizeof(int) * numInts);
+	memcpy(uniformArray, text, numChars);
+
+	textDraw->Use();
+	textDraw->Uniforms["textLength"].SetValue(numChars);
+	textDraw->Uniforms["text"].SetArrayValue(uniformArray, numInts);
+	textDraw->Uniforms["basePosition"].SetValue(pos);
+	textDraw->Uniforms["colour"].SetValue(colour);
+	QuadDrawer::DrawQuads(numChars);
+	
 }
 
 void DrawTBorder(Vec2 position, int width, int height, int borderwidth, bool repeat)

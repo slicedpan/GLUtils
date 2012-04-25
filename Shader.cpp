@@ -7,28 +7,53 @@
 
 Uniform Shader::dummy;
 
+void Shader::Init()
+{
+	vFileName = 0;
+	fFileName = 0;
+}
+
 void Shader::Register()
 {
 	ShaderManager::GetSingletonPtr()->Add(this);
 }
 
-Shader::Shader(char * vertexFileName, char * fragmentFileName) : uniformNumber(0)
+Shader::Shader()
+	 : Uniforms(uniforms),
+	uniformNumber(0)
 {	
-	SetSource(vertexFileName, fragmentFileName);
-	LoadFromFiles();	
 	SetName("");
 	Register();
 }
 
-Shader::Shader(char * vertexFileName, char * fragmentFileName, char* name) : uniformNumber(0)
+Shader::Shader(char* name)	
+	: Uniforms(uniforms),
+	uniformNumber(0)
 {
-	SetSource(vertexFileName, fragmentFileName);
-	LoadFromFiles();
 	SetName(name);
 	Register();
 }
 
-void Shader::SetSource(char * vertexFileName,char * fragmentFileName)
+Shader::Shader(char* vertexFileName, char* fragmentFileName, char* shaderName)
+	 : Uniforms(uniforms),
+	uniformNumber(0)
+{
+	SetName(shaderName);
+	SetSourceFiles(vertexFileName, fragmentFileName);
+	LoadFromFiles();
+	Register();
+}
+
+void Shader::SetSource(char* vertexSource, char* fragmentSource)
+{
+	vertexID = glCreateShader(GL_VERTEX_SHADER);
+	fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
+
+	glShaderSource(vertexID, 1, (const GLchar**)&vertexSource, 0);
+	glShaderSource(fragmentID, 1, (const GLchar**)&fragmentSource, 0);
+}
+
+void Shader::SetSourceFiles(char * vertexFileName,char * fragmentFileName)
 {
 	vFileName = (char*)malloc(strlen(vertexFileName));
 	fFileName = (char*)malloc(strlen(fragmentFileName));
@@ -37,7 +62,7 @@ void Shader::SetSource(char * vertexFileName,char * fragmentFileName)
 }
 
 void Shader::LoadFromFiles()
-{	
+{		
 	vertexID = glCreateShader(GL_VERTEX_SHADER);	
 	fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
 	char * vertexSource = getSourceFromFile(vFileName);
@@ -147,15 +172,7 @@ bool Shader::Reload()
 	glDeleteProgram(glID);
 	glDeleteShader(vertexID);
 	glDeleteShader(fragmentID);
-	LoadFromFiles();
+	if (vFileName && fFileName)
+		LoadFromFiles();
 	return Compile();
-}
-
-Uniform& Shader::Uniforms(std::string name)
-{
-	uniformIterator iter = uniforms.find(name);
-	if (iter != uniforms.end())
-		return iter->second;
-	else	
-		return dummy;
 }

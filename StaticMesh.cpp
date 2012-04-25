@@ -2,6 +2,7 @@
 #include "ObjLoader\objLoader.h"
 
 StaticMesh::StaticMesh()
+	: SubMeshes(subMeshes)
 {
 }
 
@@ -16,9 +17,9 @@ void StaticMesh::LoadObj(std::string filename, bool smoothNormals, bool generate
 
 	if (loadMaterial == false || obj->materialCount <= 1)
 	{
-		SubMesh* subMesh = new SubMesh();
-		subMesh->LoadObj(obj, smoothNormals, generateNormals);
-		SubMeshes.Add("submesh0", subMesh);		
+		SubMesh subMesh;
+		subMesh.LoadObj(obj, smoothNormals, generateNormals);
+		subMeshes.insert(meshEntry("submesh0", subMesh));		
 		return;
 	}
 }

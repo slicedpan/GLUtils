@@ -13,6 +13,7 @@ class QuadDrawer
 public:
 	static void DrawQuad(Vec2& min, Vec2& max);
 	static void DrawQuad(Vec2& min, Vec2& max, Vec2& pixSize);
+	static void DrawQuads(int number);
 	~QuadDrawer();
 private:
 	static bool initialised;

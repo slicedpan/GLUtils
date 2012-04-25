@@ -1,4 +1,6 @@
-#pragma once
+#ifndef BASICTEXTURE_H
+#define BASICTEXTURE_H
+
 #include <cstring>
 
 class BasicTexture
@@ -17,4 +19,6 @@ protected:
 	int components;
 	unsigned int glID;
 };
+
+#endif
 

@@ -9,21 +9,21 @@ class NamedCollection
 public:
 	NamedCollection(void) {}
 	
-	~NamedCollection(void) {}
-	T operator[] (const int index)
+	virtual ~NamedCollection(void) {}
+	T& operator[] (const int index)
 	{
 		return byIndex[index];
 	}
-	T operator[] (const std::string name)
+	T& operator[] (const std::string name)
 	{
 
 	}
-	void Add(const std::string name, const T item)
+	void Add(const std::string name, const T& item)
 	{
 		names.push_back(name);
 		byIndex.push_back(item);
 	}
-	void Remove(const T item)
+	void Remove(const T& item)
 	{
 		for (int i = 0; i < byIndex.size(); ++i)
 		{
@@ -56,4 +56,25 @@ private:
 	std::vector<std::string> names;
 	std::vector<T> byIndex;
 };
+
+template<typename T> 
+class NamedCollectionWrapper
+{
+public:
+	NamedCollectionWrapper(NamedCollection<T>& collection)
+		: collection(collection)
+	{}
+	T& operator[] (int index)
+	{
+		return collection[index];
+	}
+	T& operator[] (std::string name)
+	{
+		return collection[name];
+	}
+private:
+	NamedCollectionWrapper& operator= (const NamedCollectionWrapper& other) {}
+	NamedCollection<T>& collection;
+};
+
 

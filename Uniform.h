@@ -14,15 +14,17 @@ public:
 	Uniform(std::string name, unsigned int id);
 	Uniform() : name(""), id(-1) {}
 	~Uniform(void);
-	void SetValue(Mat4& matrix);
-	void SetValue(Mat3& matrix);
-	void SetValue(Vec2& vector);
-	void SetValue(Vec3& vector);
-	void SetValue(Vec4& vector);
-	void SetValue(int intVal);
-	void SetValue(float floatVal);
-	std::string& GetName() { return name; }
-	unsigned int GetId() { return id; }
+	void SetValue(Mat4& matrix) const;
+	void SetValue(Mat3& matrix) const;
+	void SetValue(Vec2& vector) const;
+	void SetValue(Vec3& vector) const;
+	void SetValue(Vec4& vector) const;
+	void SetValue(int intVal) const;
+	void SetValue(float floatVal) const;
+	void SetArrayValue(int* intValues, int count) const;
+	void SetArrayValue(float* floatValues, int count) const;	
+	std::string GetName() const { return name; }
+	unsigned int GetId() const { return id; }
 private:
 	std::string name;
 	int id;

@@ -2,7 +2,7 @@
 #include "GUIElement.h"
 #include "Primitives.h"
 #include "GUITextBox.h"
-#include "glFunctions.h"
+#include <GL\glew.h>
 
 GUITray::GUITray(int xPos, int yPos, unsigned int growDirection)
 {

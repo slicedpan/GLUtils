@@ -14,6 +14,14 @@ void QuadDrawer::DrawQuad(Vec2& min, Vec2& max)
 	DrawQuad(min, max, *(instance->zero));
 }
 
+void QuadDrawer::DrawQuads(int amount)
+{
+	if (!instance)
+		Initialise();
+	glBindVertexArray(instance->vaoID);
+	glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0, amount);
+}
+
 void QuadDrawer::DrawQuad(Vec2& min, Vec2& max, Vec2& pixSize)
 {
 	if (!instance)
@@ -31,13 +39,12 @@ void QuadDrawer::DrawQuad(Vec2& min, Vec2& max, Vec2& pixSize)
 	instance->vertexData[3].position[1] = max[1];
 
 	if (ShaderManager::GetSingletonPtr()->GetCurrent())
-		ShaderManager::GetSingletonPtr()->GetCurrent()->Uniforms("pixSize").SetValue(pixSize);
-	
+		ShaderManager::GetSingletonPtr()->GetCurrent()->Uniforms["pixSize"].SetValue(pixSize);	
+
 	glBindVertexArray(instance->vaoID);
 	glBindBuffer(GL_ARRAY_BUFFER, instance->vboID);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * 4, instance->vertexData, GL_DYNAMIC_DRAW);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0);	
-
 }
 
 void QuadDrawer::Initialise()
