@@ -53,7 +53,7 @@ public:
 			if (!it->second->Reload())
 				printf("%s", it->second->GetErrorLog());
 			else
-				printf("Shader: %s\nCompiledSuccessfully\n", it->second->GetName());
+				printf("Shader: %s\nCompiled Successfully\n", it->second->GetName());
 		}
 	}
 	void ShaderActive(Shader* shader)

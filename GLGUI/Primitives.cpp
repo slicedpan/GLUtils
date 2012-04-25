@@ -21,6 +21,9 @@
 GLuint fontTex = 0;
 bool textInitialised = false;
 
+int maxInts = 256;
+int uniformArray[256];
+
 Shader* textDraw = 0;
 
 void SetTextShader(Shader* shader)
@@ -30,7 +33,8 @@ void SetTextShader(Shader* shader)
 
 void SetupText()
 {
-	unsigned char* buf = (unsigned char*)malloc(sizeof(unsigned char) * 131072);
+	unsigned char buf[131072];
+	unsigned char* data = GetData();
 	for (int i = 0; i < 32768; ++i)
 	{
 		buf[i * 4] = data[i * 2];
@@ -40,12 +44,18 @@ void SetupText()
 	}
 	glGenTextures(1, &fontTex);
 	glBindTexture(GL_TEXTURE_2D, fontTex);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 2048, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+	GLenum err = glGetError();
+	if (err != GL_NO_ERROR)
+		printf("Error loading texture: %d\n", err);
+	else
+		printf("Font loaded.\n");
+
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);	
-	free(buf);
 
 	if (!textDraw)
 	{
@@ -54,12 +64,17 @@ void SetupText()
 			printf("%s", textDraw->GetErrorLog());
 	}
 
+	memset(uniformArray, 0, sizeof(int) * maxInts);
+
 	textInitialised = true;
 }
 
 float offset = 1.0 / 256.0;
 
 void PrintText(Vec2& pos, const char* text, Vec4& colour)
+{}
+
+void PrintText(Vec2& screenSize, Vec2& pos, const char* text, Vec4& colour)
 {
 	if (!textInitialised)
 		SetupText();
@@ -69,16 +84,22 @@ void PrintText(Vec2& pos, const char* text, Vec4& colour)
 
 	int numChars = strlen(text);
 	int numInts = (numChars / 4) + 1;
-	int* uniformArray = (int*)malloc(sizeof(int) * numInts);
-	memset(uniformArray, 0, sizeof(int) * numInts);
+
+	if (numInts > 256)
+		numChars = 1024;
+	
 	memcpy(uniformArray, text, numChars);
 
 	textDraw->Use();
 	textDraw->Uniforms["textLength"].SetValue(numChars);
-	textDraw->Uniforms["text"].SetArrayValue(uniformArray, numInts);
+	textDraw->Uniforms["text[0]"].SetArrayValue(uniformArray, numInts);
 	textDraw->Uniforms["basePosition"].SetValue(pos);
 	textDraw->Uniforms["colour"].SetValue(colour);
+	textDraw->Uniforms["screenSize"].SetValue(screenSize);
+	textDraw->Uniforms["fontTexture"].SetValue(0);
+	textDraw->Uniforms["baseTex"].SetValue(0);
 	QuadDrawer::DrawQuads(numChars);
+	//QuadDrawer::DrawQuad(Vec2(-1.0, -1.0), Vec2(1.0, 1.0), Vec2(1 / 800.0f, 1 / 600.0f));
 	
 }
 

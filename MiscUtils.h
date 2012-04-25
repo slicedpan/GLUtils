@@ -24,26 +24,45 @@ public:
 		data = (unsigned int*)malloc(sizeof(unsigned int) * dataSize);
 		memset(data, 0, dataSize * sizeof(unsigned int));
 	}
+	BitArray(const BitArray& other)
+	{
+		_size = other._size;
+		dataSize = (_size / 32) + 1;
+		data = (unsigned int*)malloc(sizeof(unsigned int) * dataSize);
+		CopyFrom(other);
+	}
+	~BitArray()
+	{
+		free(data);
+	}
 	void Set(int index, bool value)
 	{
 		int dataIndex = index / 32;
 		int mask = 1 << (index % 32);
 		data[dataIndex] |= mask;
 	}
-	bool operator[] (int index)
+	const bool operator[] (int index)
 	{
 		int dataIndex = index / 32;
 		int mask = 1 << (index % 32);
-		return data[dataIndex] & mask;
+		return (data[dataIndex] & mask);
 	}
-	int size()
+	const int size()
 	{
 		return _size;
 	}
-	void CopyTo(BitArray& other)
+	const void CopyTo(BitArray& other)
 	{
 		if (other.size() < _size)
 			return;
+		if (other.size() == _size || _size % 32 == 0)
+			memcpy(other.data, data, dataSize * sizeof(unsigned int));
+		//TODO copy to a larger array, without overwriting entries
+	}
+	void CopyFrom (const BitArray& other)
+	{
+		if (other._size == _size)
+			memcpy(data, other.data, dataSize * sizeof(unsigned int));
 	}
 private:
 	unsigned int* data;	
@@ -83,7 +102,7 @@ private:
 	listType& list;
 	ListWrapper& operator= (const ListWrapper& other) {}
 public:
-	valueType& operator[] (int index)
+	valueType operator[] (int index)
 	{
 		return list[index];
 	}
@@ -94,6 +113,10 @@ public:
 	ListWrapper(listType& list)
 		: list(list)
 	{}
+	operator const listType& () 
+	{
+		return list;
+	}
 };
 
 #endif

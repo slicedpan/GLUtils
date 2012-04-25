@@ -2,6 +2,7 @@
 #define GLFWENGINE_H
 
 #include "../BasicEngine.h"
+#include "../GLFWKeyListener.h"
 
 class GLFWTimerProvider : public ITimerProvider
 {
@@ -11,7 +12,7 @@ public:
 };
 
 class GLFWEngine :
-	public BasicEngine
+	public BasicEngine, public GLFWKeyListener
 {
 public:
 	GLFWEngine(void);
