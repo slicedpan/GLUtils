@@ -37,6 +37,8 @@ GLFWKeyListener::~GLFWKeyListener(void)
 void GLFWKeyListener::_KeyboardEvent(int code, int state)
 {
 	keyState.Set(code, state);
+	if (keyState[code] != state)
+		throw;
 	if (state == GLFW_PRESS)
 		KeyPressed(code);
 	else

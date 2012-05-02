@@ -19,6 +19,10 @@ public:
 		}
 		return instance; 
 	}
+	static ShaderManager& GetSingleton()
+	{
+		return *(GetSingletonPtr());
+	}
 	ShaderManager() : current(0) {}
 	Shader* operator[] (std::string name) {return shaders[name]; }
 	void Add(Shader* shader)

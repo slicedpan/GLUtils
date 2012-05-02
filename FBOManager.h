@@ -17,9 +17,27 @@ public:
 			instance = new FBOManager();
 		return instance; 
 	}
+	static FBOManager& GetSingleton()
+	{
+			return *(GetSingletonPtr());
+	}
 	void AddFBO(FrameBufferObject* fbo)
 	{
-		FBOs.insert(FBOEntry(fbo->GetName(), fbo));
+		FBOs.insert(FBOEntry(fbo->GetName(), fbo));	
+	}
+	bool Contains(std::string name)
+	{
+		return (FBOs.count(name) > 0);
+	}
+	void Clear()
+	{
+		FBOIterator it = FBOs.begin();
+		while (it != FBOs.end())
+		{
+			delete it->second;
+			++it;
+		}
+		FBOs.clear();
 	}
 	FBOTexture* GetTexture(unsigned int index)
 	{

@@ -11,10 +11,15 @@ FrameBufferObject::FrameBufferObject(int width, int height, int depthBufferBitDe
 	textureFormat(textureFormat),
 	textureType(textureType),
 	texNum(0),
-	nextIndex(0)
+	nextIndex(0),
+	Height(height),
+	Width(width),
+	Bound(bound)
 {
 	if (!glGenFramebuffers)
 		throw;
+
+	bound = false;
 
 	if (name == "")
 	{
@@ -61,19 +66,14 @@ FrameBufferObject::FrameBufferObject(int width, int height, int depthBufferBitDe
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, id);			
 			
 		}		
-	}
-	int depthBits, stencilBits;
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_DEPTH_SIZE, &depthBits);
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_STENCIL_SIZE, &stencilBits);
-	printf("depthBits: %d, stencilBits %d\n", depthBits, stencilBits);
+	}	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	FBOManager::GetSingletonPtr()->AddFBO(this);
 
 }
 
 FrameBufferObject::~FrameBufferObject(void)
 {
+	glDeleteFramebuffers(1, &glID);
 }
 
 void FrameBufferObject::SetDrawBuffers(bool active)
@@ -182,6 +182,7 @@ void FrameBufferObject::Bind()
 		}
 		glDrawBuffers(texNum, buffers);
 	}
+	bound = true;
 }
 
 void FrameBufferObject::Unbind()
@@ -189,4 +190,5 @@ void FrameBufferObject::Unbind()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, screenWidth, screenHeight);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	bound = false;
 }

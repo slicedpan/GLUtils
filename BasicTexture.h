@@ -10,6 +10,8 @@ public:
 	~BasicTexture(void);
 	unsigned int GetId() { return glID; }
 	void Load();
+	const int& Width;
+	const int& Height;
 protected:
 	char* filename;
 	virtual void LoadFromFile();

@@ -39,7 +39,10 @@ public:
 	{
 		int dataIndex = index / 32;
 		int mask = 1 << (index % 32);
-		data[dataIndex] |= mask;
+		if (value)
+			data[dataIndex] |= mask;
+		if (!value && data[dataIndex])
+			data[dataIndex] ^= mask;
 	}
 	const bool operator[] (int index)
 	{

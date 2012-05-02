@@ -5,7 +5,9 @@
 
 BasicTexture::BasicTexture(char* filename) 
 	: imgData(0),
-	glID(0)
+	glID(0),
+	Width(width),
+	Height(height)
 {
 	this->filename = (char*)malloc(strlen(filename));
 	strcpy(this->filename, filename);
@@ -26,6 +28,11 @@ void BasicTexture::LoadFromFile()
 	}
 	printf("%s opened\n", this->filename);
 	imgData = stbi_load_from_file(file, &width, &height, &components, 4);
+	if (!imgData)
+	{
+		printf("could not load image from file!\n");
+		return;
+	}
 	printf("loaded data from file\n");
 	glGenTextures(1, &glID);
 	printf("generated texture name\n");

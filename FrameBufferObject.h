@@ -30,6 +30,9 @@ public:
 	static void SetDefaultViewportSize(int height, int width);
 	std::string& GetName() { return name; }
 	unsigned int GetNumTextures() { return textures.size(); }
+	const bool& Bound;
+	const int& Width;
+	const int& Height;
 private:
 	void AttachTextureTo(std::string textureName, GLenum magFilter, GLenum minFilter, GLenum attachmentPoint, GLenum textureFormat, GLenum extFormat = GL_RGBA);
 	std::vector<FBOTexture*> textures;
@@ -46,5 +49,6 @@ private:
 	static int screenHeight;
 	static bool resetViewport;
 	bool setDrawBuffers;
+	bool bound;
 };
 
