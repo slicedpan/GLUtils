@@ -4,6 +4,8 @@
 class Mat4;
 class Shader;
 
+#include <GL\glew.h>
+
 struct VertexPositionColour
 {
 	float position[4]; //padding

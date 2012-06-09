@@ -59,6 +59,7 @@ void SetupText()
 
 	if (!textDraw)
 	{
+		textDraw = new Shader("Text Draw");
 		textDraw->SetSource(textDrawVertexSource, textDrawFragmentSource);
 		if (!textDraw->Compile())
 			printf("%s", textDraw->GetErrorLog());

@@ -1,7 +1,6 @@
 #include "BasicObjects.h"
-#include <GL\glew.h>
 #include <svl\SVL.h>
-#include <smart_ptr\scoped_ptr.hpp>
+#include <boost\smart_ptr\scoped_ptr.hpp>
 #include "Shader.h"
 
 CoordFrame::CoordFrame()
