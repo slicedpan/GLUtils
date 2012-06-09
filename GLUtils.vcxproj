@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicEngine.cpp" />
+    <ClCompile Include="BasicObjects.cpp" />
     <ClCompile Include="Camera\CameraController.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Colour.cpp" />
@@ -43,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicEngine.h" />
+    <ClInclude Include="BasicObjects.h" />
     <ClInclude Include="Camera\CameraController.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Colour.h" />
@@ -77,6 +79,7 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Uniform.h" />
     <ClInclude Include="SubMesh.h" />
+    <ClInclude Include="WindowSettings.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0A23B455-E6FD-4075-96D4-A14083E09A76}</ProjectGuid>
@@ -111,6 +114,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>C:\stuff\boost_1_48_0\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

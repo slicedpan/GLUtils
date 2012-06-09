@@ -14,27 +14,27 @@ Uniform::~Uniform(void)
 
 #pragma region SetValue overloads
 
-void Uniform::SetValue(Mat4& matrix) const
+void Uniform::SetValue(const Mat4& matrix) const
 {
 	if (id >= 0)
 		glUniformMatrix4fv(id, 1, false, matrix.Ref());
 }
-void Uniform::SetValue(Mat3& matrix) const
+void Uniform::SetValue(const Mat3& matrix) const
 {
 	if (id >= 0)
 		glUniformMatrix3fv(id, 1, false, matrix.Ref());
 }
-void Uniform::SetValue(Vec2& vector) const
+void Uniform::SetValue(const Vec2& vector) const
 {
 	if (id >= 0)
 		glUniform2fv(id, 1, vector.Ref());
 }
-void Uniform::SetValue(Vec3& vector) const
+void Uniform::SetValue(const Vec3& vector) const
 {
 	if(id >= 0)
 		glUniform3fv(id, 1, vector.Ref());
 }
-void Uniform::SetValue(Vec4& vector) const
+void Uniform::SetValue(const Vec4& vector) const
 {
 	if (id >= 0)
 		glUniform4fv(id, 1, vector.Ref());
@@ -56,13 +56,13 @@ void Uniform::SetValue(float floatVal) const
 
 #pragma region SetArrayValue overloads
 
-void Uniform::SetArrayValue(int* intValues, int count) const
+void Uniform::SetArrayValue(const int* intValues, int count) const
 {
 	if (id >= 0)
 		glUniform1iv(id, count, intValues);
 }
 
-void Uniform::SetArrayValue(float* floatValues, int count) const
+void Uniform::SetArrayValue(const float* floatValues, int count) const
 {
 	if (id >= 0)
 		glUniform1fv(id, count, floatValues);

@@ -22,7 +22,7 @@ class BasicEngine
 {
 public:
 	BasicEngine(ITimerProvider* timerProvider);
-	~BasicEngine(void);
+	virtual ~BasicEngine(void);
 	virtual void Setup() {}
 	virtual void Update(TimeInfo& timeInfo) {}
 	virtual void Display() {}

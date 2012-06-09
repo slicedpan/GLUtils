@@ -17,6 +17,10 @@ GLFWKeyListener::GLFWKeyListener(void)
 	: keyState(384),
 	KeyState(keyState)
 {
+}
+
+void GLFWKeyListener::KeyInit()
+{
 	if (!initialised)
 		glfwSetKeyCallback(KeyboardCallback);
 	listeners.push_back(this);

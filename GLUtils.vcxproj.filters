@@ -126,6 +126,9 @@
     <ClCompile Include="GLFWKeyListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BasicObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CubeMap.h">
@@ -231,6 +234,12 @@
       <Filter>Header Files\GLFW</Filter>
     </ClInclude>
     <ClInclude Include="GLFWKeyListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicObjects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

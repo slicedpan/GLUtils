@@ -47,6 +47,19 @@ public:
 	{
 		return Vec4(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
 	}
+
+	template <typename T>
+	static T AsBytes(Vec4& colour)
+	{
+		T* retData;
+		unsigned char byteData[4];
+		for (int i = 0; i < 4; ++i)
+		{
+			byteData[i] = (unsigned char)colour[i] * 255;
+		}
+		retData = (T*)byteData;
+		return (*retData);
+	}
 };
 
 #endif

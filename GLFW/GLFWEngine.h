@@ -4,6 +4,8 @@
 #include "../BasicEngine.h"
 #include "../GLFWKeyListener.h"
 
+struct WindowSettings;
+
 class GLFWTimerProvider : public ITimerProvider
 {
 public:
@@ -14,10 +16,16 @@ public:
 class GLFWEngine :
 	public BasicEngine, public GLFWKeyListener
 {
+private:
+	int InitWindow(WindowSettings& windowSettings);
+	WindowSettings* currentSettings;
 public:
 	GLFWEngine(void);
-	~GLFWEngine(void);	
+	GLFWEngine(WindowSettings& windowSettings);
+	virtual ~GLFWEngine(void);	
 	void EndFrame();
+	WindowSettings& Window;
+
 };
 
 #endif
