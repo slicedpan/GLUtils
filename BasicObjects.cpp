@@ -57,7 +57,7 @@ CoordFrame::CoordFrame()
 
 	shader = new Shader("DrawCoordFrame");
 	shader->SetSourceFiles("Assets/Shaders/coord.vert", "Assets/Shaders/coord.frag");
-	
+	shader->Load();
 	shader->Compile();
 }
 

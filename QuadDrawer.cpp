@@ -88,6 +88,9 @@ void QuadDrawer::Initialise()
 	glBindVertexArray(0);
 
 	instance->zero = new Vec2(0.0, 0.0);
+
+	initialised = true;
+
 }
 
 void QuadDrawer::CleanUp()
@@ -99,4 +102,5 @@ QuadDrawer::~QuadDrawer()
 {
 	free(indices);
 	free(vertexData);
+	delete zero;
 }

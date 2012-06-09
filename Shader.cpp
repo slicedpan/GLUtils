@@ -6,11 +6,13 @@
 #include <cstdlib>
 
 Uniform Shader::dummy;
+int Shader::counter = 0;
 
 void Shader::Init()
 {
-	vFileName = 0;
-	fFileName = 0;
+	glID = 0;
+	vertexID = 0;
+	fragmentID = 0;
 }
 
 void Shader::Register()
@@ -26,7 +28,7 @@ Shader::Shader()
 	Register();
 }
 
-Shader::Shader(char* name)	
+Shader::Shader(const char* name)	
 	: Uniforms(uniforms),
 	uniformNumber(0)
 {
@@ -34,7 +36,7 @@ Shader::Shader(char* name)
 	Register();
 }
 
-Shader::Shader(char* vertexFileName, char* fragmentFileName, char* shaderName)
+Shader::Shader(const char* vertexFileName, const char* fragmentFileName, const char* shaderName)
 	 : Uniforms(uniforms),
 	uniformNumber(0)
 {
@@ -44,51 +46,72 @@ Shader::Shader(char* vertexFileName, char* fragmentFileName, char* shaderName)
 	Register();
 }
 
-void Shader::SetSource(char* vertexSource, char* fragmentSource)
+void Shader::SetSource(const char* vertexSource, const char* fragmentSource)
 {
-	vertexID = glCreateShader(GL_VERTEX_SHADER);
-	fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
+	this->fragmentSource.assign(fragmentSource);
+	this->vertexSource.assign(vertexSource);
 
-	glShaderSource(vertexID, 1, (const GLchar**)&vertexSource, 0);
-	glShaderSource(fragmentID, 1, (const GLchar**)&fragmentSource, 0);
+	vertexFileName.clear();
+	fragmentFileName.clear();
+
 }
 
-void Shader::SetSourceFiles(char * vertexFileName,char * fragmentFileName)
+void Shader::SetSourceFiles(const char * vertexFileName, const char * fragmentFileName)
 {
-	vFileName = (char*)malloc(strlen(vertexFileName));
-	fFileName = (char*)malloc(strlen(fragmentFileName));
-	strcpy(vFileName, vertexFileName);
-	strcpy(fFileName, fragmentFileName);
+	this->vertexFileName.assign(vertexFileName);
+	this->fragmentFileName.assign(fragmentFileName);
 }
 
-void Shader::LoadFromFiles()
+bool Shader::LoadFromFiles()
 {		
 	vertexID = glCreateShader(GL_VERTEX_SHADER);	
 	fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
-	char * vertexSource = getSourceFromFile(vFileName);
-	char * fragmentSource = getSourceFromFile(fFileName);
-	if (!vertexSource || !fragmentSource)
-	{
-		printf("Could not find files %s and %s!", vFileName, fFileName);
-		return;
-	}
-	glShaderSource(vertexID, 1, (const GLchar**)&vertexSource, 0);
-	glShaderSource(fragmentID, 1, (const GLchar**)&fragmentSource, 0);
+	char* vs = getSourceFromFile(vertexFileName.c_str());
+	char* fs = getSourceFromFile(fragmentFileName.c_str());
 	
-	free(vertexSource);
-	free(fragmentSource);	
+	if (!fs || !vs)
+	{
+		printf("Could not find file(s): ");
+		if (fs)
+			free(fs);		
+		else
+			printf("%s", fragmentFileName.c_str());
+
+		if ((!vs) && (!fs))
+			printf(", ");
+
+		if (vs)
+			free(vs);
+		else
+			printf("%s", vertexFileName.c_str());
+
+		return false;
+	}
+	vertexSource.assign(vs);
+	fragmentSource.assign(fs);
+	const GLchar* vertexPtr = vertexSource.c_str();
+	const GLchar* fragPtr = fragmentSource.c_str();
+
+	glShaderSource(vertexID, 1, &vertexPtr, 0);
+	glShaderSource(fragmentID, 1, &fragPtr, 0);
+
+	free(vs);
+	free(fs);
+
+	return true;
+
 }
 
 void Shader::SetUniforms()
 {
-	char buf[64];
+	char buf[256];
 	int size;
 	GLenum type;
 	glGetProgramiv(glID, GL_ACTIVE_UNIFORMS, &uniformNumber);
 	uniforms.clear();
 	for (unsigned int i = 0; i < uniformNumber; ++i)
 	{
-		glGetActiveUniform(glID, i, 64, 0, &size, &type, buf);
+		glGetActiveUniform(glID, i, 256, 0, &size, &type, buf);
 		uniforms.insert(uniformEntry(std::string(buf), Uniform(std::string(buf), i)));
 	}
 }
@@ -141,7 +164,7 @@ Shader::~Shader(void)
 {
 }
 
-char * getSourceFromFile(char* filename)
+char * getSourceFromFile(const char* filename)
 {
 	FILE * input = 0;
 	input = fopen(filename, "rb");
@@ -149,8 +172,6 @@ char * getSourceFromFile(char* filename)
 		return 0;
 	int size;
 	char * buf;
-	if (!input)
-		return 0;
 	fseek(input, 0, SEEK_END);
 	size = ftell(input);
 	fseek(input, 0, SEEK_SET);
@@ -167,12 +188,27 @@ void Shader::Use()
 	ShaderManager::GetSingletonPtr()->ShaderActive(this);
 }
 
-bool Shader::Reload()
+bool Shader::Load()
 {
-	glDeleteProgram(glID);
-	glDeleteShader(vertexID);
-	glDeleteShader(fragmentID);
-	if (vFileName && fFileName)
-		LoadFromFiles();
+	if (glID)
+	{
+		glDeleteProgram(glID);
+		glID = 0;
+	}
+	if (vertexID)
+	{
+		glDeleteShader(vertexID);
+		vertexID = 0;
+	}
+	if (fragmentID)
+	{
+		glDeleteShader(fragmentID);
+		fragmentID = 0;
+	}
+	if (!vertexFileName.empty() && !fragmentFileName.empty())
+	{
+		if (!LoadFromFiles())
+			return false;
+	}
 	return Compile();
 }

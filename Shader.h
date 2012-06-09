@@ -13,21 +13,22 @@ typedef std::map<std::string, Uniform> UniformList;
 class Shader
 {
 public:
-	Shader(char * vertexFileName, char * fragmentFileName, char * shaderName);
+	Shader(const char * vertexFileName, const char * fragmentFileName, const char * shaderName);   //deprecated
 	Shader();
-	Shader(char * shaderName);
-	void SetSource(char* vertexSource, char* fragmentSource);
+	Shader(const char * shaderName);
+	void SetSource(const char* vertexSource, const char* fragmentSource);
 	MapWrapper<std::string, Uniform> Uniforms;
 	const UniformList& GetActiveUniforms() { return uniforms; }
-	void SetSourceFiles(char * vertexFileName, char * fragmentFileName);
+	void SetSourceFiles(const char * vertexFileName, const char * fragmentFileName);
 	~Shader(void);
 	bool Compile();
 	char * GetErrorLog() { return errorLog;	}
 	unsigned int GetId() { return glID; }
 	void Use();
-	bool Reload();
+	bool Load();
+	bool Reload() { return Load(); } //deprecated
 	char * GetName() { return name; }
-	void SetName(char* name) { strncpy(this->name, name, 64); }
+	void SetName(const char* name) { strncpy(this->name, name, 64); }
 	//int GetNumberOfUniforms() { return uniformNumber; }	use Uniforms.size();
 private:
 	std::map<std::string, Uniform> uniforms;
@@ -35,16 +36,19 @@ private:
 	unsigned int vertexID;
 	unsigned int fragmentID;
 	char errorLog[1024];
-	void LoadFromFiles();
+	bool LoadFromFiles();
 	void SetUniforms();
 	void Init();
-	char * vFileName;
-	char * fFileName;
+	std::string vertexFileName;
+	std::string fragmentFileName;
 	char name[64];
 	int uniformNumber;
 	static Uniform dummy;
 	void Register();
+	std::string fragmentSource;
+	std::string vertexSource;
+	static int counter;
 };
 
-char * getSourceFromFile(char* filename);
+char * getSourceFromFile(const char* filename);
 
