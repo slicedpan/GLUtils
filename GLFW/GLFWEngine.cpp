@@ -56,6 +56,7 @@ int GLFWEngine::InitWindow(WindowSettings& w)
 
 GLFWEngine::~GLFWEngine(void)
 {
+	//glfwTerminate();
 }
 
 void GLFWEngine::EndFrame()

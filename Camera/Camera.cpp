@@ -10,6 +10,7 @@ Camera::Camera(void) : Position(0.0f, 0.0f, 0.0f)
 	zNear = 0.1f;
 	zFar = 1000.0f;
 	aspectRatio = 1.33333;
+	UpdateProjection();
 }
 
 Camera::~Camera(void)

@@ -25,7 +25,7 @@ Shader::Shader()
 	uniformNumber(0)
 {	
 	SetName("");
-	Register();
+	//Register();
 }
 
 Shader::Shader(const char* name)	
@@ -33,7 +33,7 @@ Shader::Shader(const char* name)
 	uniformNumber(0)
 {
 	SetName(name);
-	Register();
+	//Register();
 }
 
 Shader::Shader(const char* vertexFileName, const char* fragmentFileName, const char* shaderName)
@@ -43,7 +43,7 @@ Shader::Shader(const char* vertexFileName, const char* fragmentFileName, const c
 	SetName(shaderName);
 	SetSourceFiles(vertexFileName, fragmentFileName);
 	LoadFromFiles();
-	Register();
+	//Register();
 }
 
 void Shader::SetSource(const char* vertexSource, const char* fragmentSource)
