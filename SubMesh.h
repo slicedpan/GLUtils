@@ -1,6 +1,7 @@
 #pragma once
 
 class objLoader;
+class Vec3;
 
 #define HASNORMALS 1
 #define HASTEXTURECOORDS 2
@@ -60,8 +61,8 @@ class SubMesh
 public:
 	SubMesh();
 	~SubMesh(void);
-	bool HasNormals() { return hasNormals; }
-	bool HasTextureCoords() { return hasTextureCoords; }
+	bool HasNormals() { return meshInfo.componentFlags & HASNORMALS; }
+	bool HasTextureCoords() { return meshInfo.componentFlags & HASTEXTURECOORDS; }
 	unsigned int GetNumVertices() { return meshInfo.vertexCount; }
 	unsigned int GetNumTriangles() { return meshInfo.triCount; }
 	void Draw();
@@ -79,15 +80,18 @@ private:
 	float* meshData;
 	unsigned char* byteIndexData;
 	unsigned short* indexData;
-	unsigned int* longIndexData;
-	bool hasNormals;
-	bool hasTextureCoords;	
+	unsigned int* longIndexData;	
 	MeshInfo meshInfo;
 	unsigned int bufID;
 	unsigned int indexBufID;
 	unsigned int vaoID;
 	bool loaded;	
 	void InitialiseVAO();
+	Vec3* min;
+	Vec3* max;
+public:
+	const Vec3& Min;
+	const Vec3& Max;
 };
 
 template <typename T>

@@ -93,10 +93,10 @@ void FrameBufferObject::AttachTextureTo(std::string name, GLenum magFilter, GLen
 	glGenTextures(1, &tex->glID);
 	glBindTexture(textureType, tex->glID);
 	glTexImage2D(textureType, 0, texFormat, width, height, 0, extFormat, GL_FLOAT, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+	glTexParameteri(textureType, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(textureType, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, magFilter);
+	glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, minFilter);
 	glBindFramebuffer(GL_FRAMEBUFFER, glID);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentPoint, GL_TEXTURE_2D, tex->glID, 0);
 	textures.push_back(tex);

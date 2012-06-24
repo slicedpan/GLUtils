@@ -3,8 +3,7 @@
 #include "DebugDraw.h"
 #include <GL/glew.h>
 #include <cstdlib>
-
-
+#include <svl\SVL.h>
 
 Vec3 FromFloatV(float * ptr)
 {
@@ -38,9 +37,6 @@ void SubMesh::LoadCached(unsigned char* data)	//we want to copy the data so call
 		memcpy(byteIndexData, data + offset, sizeof(unsigned char) * 3 * meshInfo.triCount);
 		break;
 	}
-
-	hasNormals = meshInfo.componentFlags & HASNORMALS;
-	hasTextureCoords = meshInfo.componentFlags & HASTEXTURECOORDS;
 
 	InitialiseVAO();
 }
@@ -110,7 +106,7 @@ void SubMesh::LoadObj(objLoader* obj, bool smoothNormals, bool generateNormals)
 	glGenVertexArrays(1, &vaoID);
 
 	bool hasNormals = true;
-	bool hasTextureCoords = true;
+	bool hasTextureCoords = true;	
 
 	for (int i = 0; i < obj->faceCount; ++i)
 	{
@@ -178,6 +174,14 @@ void SubMesh::LoadObj(objLoader* obj, bool smoothNormals, bool generateNormals)
 			meshData[meshDataIndex + 2] = obj->vertexList[obj->faceList[i]->vertex_index[j]]->e[2];
 
 			vertexOffset += 3;
+
+			for (int k = 0; k < 3; ++k)
+			{
+				if (obj->vertexList[obj->faceList[i]->vertex_index[j]]->e[k] > (*max)[k])
+					(*max)[k] = obj->vertexList[obj->faceList[i]->vertex_index[j]]->e[k];
+				if (obj->vertexList[obj->faceList[i]->vertex_index[j]]->e[k] < (*min)[k])
+					(*min)[k] = obj->vertexList[obj->faceList[i]->vertex_index[j]]->e[k];
+			}
 
 			if (hasNormals)
 			{
@@ -256,17 +260,17 @@ void SubMesh::InitialiseVAO()
 	glEnableVertexAttribArray(0);	
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, meshInfo.vertexSize, (void*)0);
 
-	if (hasNormals)
+	if (HasNormals())
 	{
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, meshInfo.vertexSize, (void*)(3 * sizeof(float)));
-		if (hasTextureCoords)
+		if (HasTextureCoords())
 		{
 			glEnableVertexAttribArray(2);
 			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, meshInfo.vertexSize, (char*)0 + 6 * sizeof(float));
 		}
 	}
-	else if (hasTextureCoords)
+	else if (HasTextureCoords())
 	{
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, meshInfo.vertexSize, (char*)0 + 3 * sizeof(float));
@@ -277,14 +281,17 @@ void SubMesh::InitialiseVAO()
 }
 
 SubMesh::SubMesh()
-	: hasNormals(false),
-	hasTextureCoords(false),
-	meshData(0),
+	: meshData(0),
 	indexData(0),
 	vaoID(0),
 	bufID(0),
 	indexBufID(0),
-	loaded(false)
+	loaded(false),
+	obj(0),
+	min(new Vec3(FLT_MAX, FLT_MAX, FLT_MAX)),
+	max(new Vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX)),
+	Min(*min),
+	Max(*max)
 {
 
 }
@@ -316,12 +323,17 @@ void SubMesh::CleanUp()
 		glDeleteBuffers(1, &indexBufID);
 		indexBufID = 0;
 	}
+	if (obj)
+	{
+		delete obj;
+		obj = 0;
+	}
 	loaded = false;
 }
 
 SubMesh::~SubMesh(void)
 {
-	delete obj;
+	
 }
 
 void SubMesh::Draw()
@@ -363,7 +375,7 @@ void SubMesh::DrawImmediate()
 	for (int i = 0; i < meshInfo.triCount; ++i)
 	{
 		Triangle t = GetTriangle(i);
-		if (meshInfo.componentFlags == HASTEXTURECOORDS)
+		if (HasTextureCoords())
 		{
 			for (int j = 0; j < 3; ++j)
 			{
@@ -378,9 +390,9 @@ void SubMesh::DrawImmediate()
 			{
 				VertexPositionNormalTexcoord* vpnt = GetVertexData<VertexPositionNormalTexcoord>(t.index[j]);
 				glVertex3fv(vpnt->position);
-				if (hasNormals)
+				if (HasNormals())
 					glNormal3fv(vpnt->normal);
-				if (hasTextureCoords)
+				if (HasTextureCoords())
 					glTexCoord2fv(vpnt->texCoord);
 			}
 		}

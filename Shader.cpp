@@ -13,6 +13,7 @@ void Shader::Init()
 	glID = 0;
 	vertexID = 0;
 	fragmentID = 0;
+	compiled = false;
 }
 
 void Shader::Register()
@@ -22,24 +23,30 @@ void Shader::Register()
 
 Shader::Shader()
 	 : Uniforms(uniforms),
-	uniformNumber(0)
+	uniformNumber(0),
+	Compiled(compiled)
 {	
+	Init();
 	SetName("");
 	//Register();
 }
 
 Shader::Shader(const char* name)	
 	: Uniforms(uniforms),
-	uniformNumber(0)
+	uniformNumber(0),
+	Compiled(compiled)
 {
+	Init();
 	SetName(name);
 	//Register();
 }
 
 Shader::Shader(const char* vertexFileName, const char* fragmentFileName, const char* shaderName)
 	 : Uniforms(uniforms),
-	uniformNumber(0)
+	uniformNumber(0),
+	Compiled(compiled)
 {
+	Init();
 	SetName(shaderName);
 	SetSourceFiles(vertexFileName, fragmentFileName);
 	LoadFromFiles();
@@ -118,6 +125,7 @@ void Shader::SetUniforms()
 
 bool Shader::Compile()
 {
+	compiled = false;
 	char buf[256];
 	int flag = 0;
 
@@ -157,6 +165,7 @@ bool Shader::Compile()
 	if (!flag)
 		return false;
 	SetUniforms();
+	compiled = true;
 	return true;
 }
 

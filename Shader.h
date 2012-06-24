@@ -48,6 +48,9 @@ private:
 	std::string fragmentSource;
 	std::string vertexSource;
 	static int counter;
+	bool compiled;
+public:
+	const bool& Compiled;
 };
 
 char * getSourceFromFile(const char* filename);

@@ -87,7 +87,9 @@ public:
 	valueType& operator[] (int index)
 	{
 		std::map<keyType, valueType>::iterator iter = map.begin();
-		return (iter + index)->second;
+		for (int i = 0; i < index; ++i)
+			++iter;
+		return iter->second;
 	}
 	int size()
 	{
