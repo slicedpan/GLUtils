@@ -13,6 +13,8 @@ Vec3 FromFloatV(float * ptr)
 void SubMesh::LoadCached(unsigned char* data)	//we want to copy the data so caller can free it afterwards
 {
 
+	printf("Loading mesh from cached version... ");
+
 	int offset = 0;
 
 	memcpy(&meshInfo, data, sizeof(MeshInfo));
@@ -38,6 +40,11 @@ void SubMesh::LoadCached(unsigned char* data)	//we want to copy the data so call
 		break;
 	}
 
+	printf("done.\n");
+
+	memcpy(min, &meshInfo.minX, sizeof(float) * 3);
+	memcpy(max, &meshInfo.maxX, sizeof(float) * 3);
+
 	InitialiseVAO();
 }
 
@@ -46,7 +53,7 @@ SubMeshBlock SubMesh::GenerateCache()
 	
 	SubMeshBlock smb;
 
-	smb.size = 0;
+	smb.size = 0; 
 
 	smb.size += sizeof(MeshInfo);
 
@@ -56,8 +63,7 @@ SubMeshBlock SubMesh::GenerateCache()
 	switch (meshInfo.indexFormat)
 	{
 	case GL_UNSIGNED_INT:
-		indexSize = sizeof(unsigned int);
-		
+		indexSize = sizeof(unsigned int);		
 		break;
 	case GL_UNSIGNED_SHORT:
 		indexSize = sizeof(unsigned short);
@@ -84,13 +90,13 @@ SubMeshBlock SubMesh::GenerateCache()
 	switch (meshInfo.indexFormat)	//index data
 	{
 	case GL_UNSIGNED_INT:
-		memcpy(smb.data, longIndexData, indexSize * meshInfo.triCount * 3);
+		memcpy(smb.data + offset, longIndexData, indexSize * meshInfo.triCount * 3);
 		break;
 	case GL_UNSIGNED_SHORT:
-		memcpy(smb.data, indexData, indexSize * meshInfo.triCount * 3);
+		memcpy(smb.data + offset, indexData, indexSize * meshInfo.triCount * 3);
 		break;
 	case GL_UNSIGNED_BYTE:
-		memcpy(smb.data, byteIndexData, indexSize * meshInfo.triCount * 3);
+		memcpy(smb.data + offset, byteIndexData, indexSize * meshInfo.triCount * 3);
 		break;
 	}
 
@@ -101,9 +107,9 @@ SubMeshBlock SubMesh::GenerateCache()
 void SubMesh::LoadObj(objLoader* obj, bool smoothNormals, bool generateNormals)
 {
 
-	memset(&meshInfo, 0, sizeof(MeshInfo));
-
-	glGenVertexArrays(1, &vaoID);
+	printf("Loading from obj");
+	
+	memset(&meshInfo, 0, sizeof(MeshInfo));	
 
 	bool hasNormals = true;
 	bool hasTextureCoords = true;	
@@ -164,8 +170,15 @@ void SubMesh::LoadObj(objLoader* obj, bool smoothNormals, bool generateNormals)
 	unsigned int vertexOffset;
 	int indexCount = 0;
 
+	int step = obj->faceCount / 10;
+
 	for (int i = 0; i < obj->faceCount; ++i)
 	{
+		if (i % step == 0)
+		{
+			printf(".");
+			fflush(stdout);
+		}
 		for (int j = 0; j < 3; ++j)
 		{
 			vertexOffset = 0;
@@ -214,6 +227,16 @@ void SubMesh::LoadObj(objLoader* obj, bool smoothNormals, bool generateNormals)
 		}			
 	}
 
+	meshInfo.maxX = (*max)[0];
+	meshInfo.maxY = (*max)[1];
+	meshInfo.maxZ = (*max)[2];
+
+	meshInfo.minX = (*min)[0];
+	meshInfo.minY = (*min)[1];
+	meshInfo.minZ = (*min)[2];
+
+	printf(" done.\n");
+
 	if (generateNormals && !hasNormals)
 	{		
 		Vec3 v1, v2, v3;
@@ -238,6 +261,9 @@ void SubMesh::LoadObj(objLoader* obj, bool smoothNormals, bool generateNormals)
 
 void SubMesh::InitialiseVAO()
 {
+
+	glGenVertexArrays(1, &vaoID);
+
 	glGenBuffers(1, &bufID);
 	glGenBuffers(1, &indexBufID);
 	
@@ -248,7 +274,7 @@ void SubMesh::InitialiseVAO()
 	switch (meshInfo.indexFormat)
 	{
 	case GL_UNSIGNED_INT:
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * meshInfo.triCount * 3, longIndexData, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * meshInfo.triCount * 3, longIndexData, GL_STATIC_DRAW);
 		break;
 	case GL_UNSIGNED_SHORT:
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshInfo.triCount * 3 * sizeof(unsigned short), indexData, GL_STATIC_DRAW);
@@ -411,9 +437,20 @@ void SubMesh::Print()
 		printf("index: %d, p2: %f, %f, %f\t n2: %f, %f, %f\n", (i * 3) + 1, *pos1, *(pos1 + 1), *(pos1 + 2), *(pos1 + 3), *(pos1 + 4), *(pos1 + 5));
 		pos1 += meshInfo.vertexComponents;
 		printf("index: %d, p3: %f, %f, %f\t n3: %f, %f, %f\n", (i * 3) + 2, *pos1, *(pos1 + 1), *(pos1 + 2), *(pos1 + 3), *(pos1 + 4), *(pos1 + 5));
-	}
+	}	
 	for (int i = 0; i < meshInfo.triCount; ++i)
 	{
-		printf("Tri: %d, indices: %d, %d, %d\n", i, indexData[(i * 3)], indexData[(i * 3) + 1], indexData[(i * 3) + 2]);
+		switch (meshInfo.indexFormat)
+		{
+		case GL_UNSIGNED_INT:
+			printf("Tri: %d, indices: %d, %d, %d\n", i, longIndexData[(i * 3)], longIndexData[(i * 3) + 1], longIndexData[(i * 3) + 2]);
+			break;
+		case GL_UNSIGNED_SHORT:
+			printf("Tri: %d, indices: %d, %d, %d\n", i, indexData[(i * 3)], indexData[(i * 3) + 1], indexData[(i * 3) + 2]);
+			break;
+		case GL_UNSIGNED_BYTE:
+			printf("Tri: %d, indices: %d, %d, %d\n", i, byteIndexData[(i * 3)], byteIndexData[(i * 3) + 1], byteIndexData[(i * 3) + 2]);
+			break;
+		}
 	}
 }

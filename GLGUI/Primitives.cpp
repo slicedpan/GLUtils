@@ -47,10 +47,15 @@ void SetupText()
 	//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 2048, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2048, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR)
-		printf("Error loading texture: %d\n", err);
+	{
+		printf("Error loading texture: ");
+		GLError(err);
+		printf("\n");
+	}
 	else
 		printf("Font loaded.\n");
 

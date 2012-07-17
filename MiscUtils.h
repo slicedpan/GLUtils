@@ -124,4 +124,6 @@ public:
 	}
 };
 
+void GLError(unsigned int error);
+
 #endif

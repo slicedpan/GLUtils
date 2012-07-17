@@ -22,5 +22,12 @@ public:
 	char* filename;
 };
 
+struct MeshCacheInfo
+{
+	size_t headerSize;
+	int numSubMeshes;
+	size_t* subMeshSize;
+};
+
 #endif
 

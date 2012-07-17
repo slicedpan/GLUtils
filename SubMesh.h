@@ -48,6 +48,8 @@ struct MeshInfo
 	unsigned int triCount;
 	unsigned int indexFormat;
 	unsigned int componentFlags;
+	float minX, minY, minZ;
+	float maxX, maxY, maxZ;
 };
 
 struct SubMeshBlock

@@ -29,6 +29,7 @@
     <ClCompile Include="GLGUI\Primitives.cpp" />
     <ClCompile Include="GLGUI\shaders.cpp" />
     <ClCompile Include="GLGUI\Slider.cpp" />
+    <ClCompile Include="MiscUtils.cpp" />
     <ClCompile Include="QuadDrawer.cpp" />
     <ClCompile Include="ObjLoader\list.cpp" />
     <ClCompile Include="ObjLoader\objLoader.cpp" />

@@ -19,6 +19,9 @@ public:
 	void SetValue(const Vec2& vector) const;
 	void SetValue(const Vec3& vector) const;
 	void SetValue(const Vec4& vector) const;
+	void SetValue(int i1, int i2) const;
+	void SetValue(int i1, int i2, int i3) const;
+	void SetValue(int i1, int i2, int i3, int i4) const;
 	void SetValue(int intVal) const;
 	void SetValue(float floatVal) const;
 	void SetArrayValue(const int* intValues, int count) const;

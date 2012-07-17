@@ -52,6 +52,24 @@ void Uniform::SetValue(float floatVal) const
 		glUniform1f(id, floatVal);
 }
 
+void Uniform::SetValue(int i1, int i2, int i3, int i4) const
+{
+	if (id >= 0)
+		glUniform4i(id, i1, i2, i3, i4);
+}
+
+void Uniform::SetValue(int i1, int i2, int i3) const
+{
+	if (id >= 0)
+		glUniform3i(id, i1, i2, i3);
+}
+
+void Uniform::SetValue(int i1, int i2) const
+{
+	if (id >= 0)
+		glUniform2i(id, i1, i2);
+}
+
 #pragma endregion
 
 #pragma region SetArrayValue overloads
