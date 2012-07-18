@@ -41,20 +41,29 @@ void SetupText()
 {	
 	unsigned char buf[131072];
 	unsigned char* data = GetData();
+	memset(buf, 0, 131072);
 	unsigned int checkSum = 0;
 	for (int i = 0; i < 32768; ++i)
 	{
 		checkSum += data[i * 2] + data[(i * 2) + 1];
-		buf[i * 4] = data[i * 2];
+		/*buf[i * 4] = data[i * 2];
 		buf[(i * 4) + 1] = data[i * 2];
 		buf[(i * 4) + 2] = data[i * 2];
-		buf[(i * 4) + 3] = data[(i * 2) + 1];
+		buf[(i * 4) + 3] = data[(i * 2) + 1];*/
+		if (data[i * 2] || data[i * 2 + 1])
+		{
+			buf[(i * 4)] = 255;
+			buf[(i * 4) + 1] = 255;
+			buf[(i * 4) + 2] = 255;
+			buf[(i * 4) + 3] = 255;
+		}
+
 	}
 	glGenTextures(1, &fontTex);
 	glBindTexture(GL_TEXTURE_2D, fontTex);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);		
 
 	glGetError();
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2048, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
