@@ -27,8 +27,8 @@ GLuint DebugGetFontTexID()
 	return fontTex;
 }
 
-int maxInts = 256;
-int uniformArray[256];
+#define MAXINTS 64
+int uniformArray[MAXINTS];
 
 Shader* textDraw = 0;
 
@@ -41,23 +41,13 @@ void SetupText()
 {	
 	unsigned char buf[131072];
 	unsigned char* data = GetData();
-	memset(buf, 0, 131072);
-	unsigned int checkSum = 0;
+
 	for (int i = 0; i < 32768; ++i)
 	{
-		checkSum += data[i * 2] + data[(i * 2) + 1];
-		/*buf[i * 4] = data[i * 2];
+		buf[i * 4] = data[i * 2];
 		buf[(i * 4) + 1] = data[i * 2];
 		buf[(i * 4) + 2] = data[i * 2];
-		buf[(i * 4) + 3] = data[(i * 2) + 1];*/
-		if (data[i * 2] || data[i * 2 + 1])
-		{
-			buf[(i * 4)] = 255;
-			buf[(i * 4) + 1] = 255;
-			buf[(i * 4) + 2] = 255;
-			buf[(i * 4) + 3] = 255;
-		}
-
+		buf[(i * 4) + 3] = data[(i * 2) + 1];
 	}
 	glGenTextures(1, &fontTex);
 	glBindTexture(GL_TEXTURE_2D, fontTex);
@@ -88,7 +78,7 @@ void SetupText()
 			printf("%s", textDraw->GetErrorLog());
 	}
 
-	memset(uniformArray, 0, sizeof(int) * maxInts);
+	memset(uniformArray, 0, sizeof(int) * MAXINTS);
 
 	textInitialised = true;
 }
@@ -122,7 +112,8 @@ void PrintText(Vec2& screenSize, Vec2& pos, const char* text, Vec4& colour)
 
 	textDraw->Use();
 	textDraw->Uniforms["textLength"].SetValue(numChars);
-	textDraw->Uniforms["text[0]"].SetArrayValue(uniformArray, numInts);
+	textDraw->Uniforms["text[0]"].SetArrayValue(uniformArray, numInts);	//NVidia
+	textDraw->Uniforms["text"].SetArrayValue(uniformArray, numInts); //ATI  FFUUUUUU
 	textDraw->Uniforms["basePosition"].SetValue(pos);
 	textDraw->Uniforms["colour"].SetValue(colour);
 	textDraw->Uniforms["screenSize"].SetValue(screenSize);
