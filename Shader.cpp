@@ -63,6 +63,15 @@ void Shader::SetSource(const char* vertexSource, const char* fragmentSource)
 
 }
 
+void Shader::DebugPrintSources()
+{
+	char buf[16384];
+	glGetShaderSource(vertexID, 16384, NULL, buf);
+	printf("%s\n", buf);
+	glGetShaderSource(fragmentID, 16384, NULL, buf);
+	printf("%s\n", buf);
+}
+
 void Shader::SetSourceFiles(const char * vertexFileName, const char * fragmentFileName)
 {
 	this->vertexFileName.assign(vertexFileName);

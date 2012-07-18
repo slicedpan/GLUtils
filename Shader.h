@@ -30,6 +30,7 @@ public:
 	char * GetName() { return name; }
 	void SetName(const char* name) { strncpy(this->name, name, 64); }
 	//int GetNumberOfUniforms() { return uniformNumber; }	use Uniforms.size();
+	void DebugPrintSources();
 private:
 	std::map<std::string, Uniform> uniforms;
 	unsigned int glID;

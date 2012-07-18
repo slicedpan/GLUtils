@@ -12,5 +12,6 @@ void PrintText(Vec2& screenSize, Vec2& pos, const char* text, Vec4& colour);
 void PrintText(Vec2& pos, const char* text, Vec4& colour);
 void DrawTexQuad();
 void SetTextShader(Shader* shader);
+GLuint DebugGetFontTexID();
 
 #endif

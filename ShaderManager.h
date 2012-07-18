@@ -42,7 +42,7 @@ public:
 		printf("Compiling Shaders...");
 		for (shaderIterator it = BeginIterator(); it != EndIterator(); ++it)
 		{
-			printf("%s:\n", it->second->GetName());
+			printf("\n\n%s:\n", it->second->GetName());
 			if (!it->second->Compile())
 				printf("%s", it->second->GetErrorLog());		
 			else
@@ -55,7 +55,10 @@ public:
 		for (shaderIterator it = BeginIterator(); it != EndIterator(); ++it)
 		{
 			if (!it->second->Reload())
+			{
+				printf("\n\n%s:\n", it->second->GetName());
 				printf("%s", it->second->GetErrorLog());
+			}
 			else
 				printf("Shader: %s\nCompiled Successfully\n", it->second->GetName());
 		}

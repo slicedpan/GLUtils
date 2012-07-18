@@ -5,6 +5,7 @@
 #include "../Shader.h"
 #include "fonttex.h"
 #include "shaderDefs.h"
+#include <stdlib.h>
 
 //void PrintText(Vec2 pos, const char* text, Vec4& colour)
 //{
@@ -21,6 +22,11 @@
 GLuint fontTex = 0;
 bool textInitialised = false;
 
+GLuint DebugGetFontTexID()
+{
+	return fontTex;
+}
+
 int maxInts = 256;
 int uniformArray[256];
 
@@ -32,11 +38,13 @@ void SetTextShader(Shader* shader)
 }
 
 void SetupText()
-{
+{	
 	unsigned char buf[131072];
 	unsigned char* data = GetData();
+	unsigned int checkSum = 0;
 	for (int i = 0; i < 32768; ++i)
 	{
+		checkSum += data[i * 2] + data[(i * 2) + 1];
 		buf[i * 4] = data[i * 2];
 		buf[(i * 4) + 1] = data[i * 2];
 		buf[(i * 4) + 2] = data[i * 2];
@@ -45,11 +53,10 @@ void SetupText()
 	glGenTextures(1, &fontTex);
 	glBindTexture(GL_TEXTURE_2D, fontTex);
 
-	/*
-	//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		
 
+	glGetError();
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2048, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR)
@@ -60,20 +67,6 @@ void SetupText()
 	}
 	else
 		printf("Font loaded.\n");
-
-		*/
-
-	glGetError();
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2048, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
-		GLenum err = glGetError();
-		if (err != GL_NO_ERROR)
-		{
-			printf("Error loading texture: ");
-			GLError(err);
-			printf("\n");
-		}
-		else
-			printf("Font loaded.\n");
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);	
@@ -94,7 +87,9 @@ void SetupText()
 float offset = 1.0 / 256.0;
 
 void PrintText(Vec2& pos, const char* text, Vec4& colour)
-{}
+{
+	throw(std::string("this doesn't do anything"));	
+}
 
 void PrintText(Vec2& screenSize, Vec2& pos, const char* text, Vec4& colour)
 {
