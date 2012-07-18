@@ -44,6 +44,8 @@ void SetupText()
 	}
 	glGenTextures(1, &fontTex);
 	glBindTexture(GL_TEXTURE_2D, fontTex);
+
+	/*
 	//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -58,6 +60,20 @@ void SetupText()
 	}
 	else
 		printf("Font loaded.\n");
+
+		*/
+
+	glGetError();
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2048, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+		GLenum err = glGetError();
+		if (err != GL_NO_ERROR)
+		{
+			printf("Error loading texture: ");
+			GLError(err);
+			printf("\n");
+		}
+		else
+			printf("Font loaded.\n");
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);	
@@ -83,7 +99,11 @@ void PrintText(Vec2& pos, const char* text, Vec4& colour)
 void PrintText(Vec2& screenSize, Vec2& pos, const char* text, Vec4& colour)
 {
 	if (!textInitialised)
+	{
+		glGetError();
+		glGetError();
 		SetupText();
+	}
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fontTex);

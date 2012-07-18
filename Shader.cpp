@@ -56,7 +56,7 @@ Shader::Shader(const char* vertexFileName, const char* fragmentFileName, const c
 void Shader::SetSource(const char* vertexSource, const char* fragmentSource)
 {
 	this->fragmentSource.assign(fragmentSource);
-	this->vertexSource.assign(vertexSource);
+	this->vertexSource.assign(vertexSource);	
 
 	vertexFileName.clear();
 	fragmentFileName.clear();
@@ -71,8 +71,6 @@ void Shader::SetSourceFiles(const char * vertexFileName, const char * fragmentFi
 
 bool Shader::LoadFromFiles()
 {		
-	vertexID = glCreateShader(GL_VERTEX_SHADER);	
-	fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
 	char* vs = getSourceFromFile(vertexFileName.c_str());
 	char* fs = getSourceFromFile(fragmentFileName.c_str());
 	
@@ -96,11 +94,6 @@ bool Shader::LoadFromFiles()
 	}
 	vertexSource.assign(vs);
 	fragmentSource.assign(fs);
-	const GLchar* vertexPtr = vertexSource.c_str();
-	const GLchar* fragPtr = fragmentSource.c_str();
-
-	glShaderSource(vertexID, 1, &vertexPtr, 0);
-	glShaderSource(fragmentID, 1, &fragPtr, 0);
 
 	free(vs);
 	free(fs);
@@ -128,6 +121,15 @@ bool Shader::Compile()
 	compiled = false;
 	char buf[256];
 	int flag = 0;
+
+	fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
+	vertexID = glCreateShader(GL_VERTEX_SHADER);
+
+	const GLchar* vertexPtr = this->vertexSource.c_str();
+	const GLchar* fragPtr = this->fragmentSource.c_str();
+
+	glShaderSource(vertexID, 1, &vertexPtr, 0);
+	glShaderSource(fragmentID, 1, &fragPtr, 0);
 
 	memset((void*)errorLog, 0, sizeof(char) * 1024);
 
