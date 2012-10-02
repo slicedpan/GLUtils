@@ -20,6 +20,7 @@ FrameBufferObject::FrameBufferObject(int width, int height, int depthBufferBitDe
 		throw;
 
 	bound = false;
+	setDrawBuffers = false;
 
 	if (name == "")
 	{
@@ -189,6 +190,7 @@ void FrameBufferObject::Unbind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, screenWidth, screenHeight);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	if (setDrawBuffers)
+		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 	bound = false;
 }
